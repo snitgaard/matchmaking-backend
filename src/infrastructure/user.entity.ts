@@ -1,23 +1,26 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Match } from './match.entity';
 
 @Entity()
 export class User {
-    @PrimaryColumn({ unique: true })
-    public id: string;
+  @PrimaryColumn({ unique: true })
+  public id: string;
 
-    @Column({ unique: true })
-    public username: string;
+  @Column({ unique: true })
+  public username: string;
 
-    @Column({ unique: false })
-    public password: string;
+  @Column({ unique: false })
+  public password: string;
 
-    @Column({ unique: false })
-    public rating: number;
+  @Column({ unique: false })
+  public rating: number;
 
-    @Column({ unique: false })
-    public inGame: boolean;
+  @Column({ unique: false })
+  public inGame: boolean;
 
-    @Column({ unique: false })
-    public inQueue: boolean;
+  @Column({ unique: false })
+  public inQueue: boolean;
 
+  @OneToMany(() => Match, (match: Match) => match.winner)
+  public matches: Match[];
 }
