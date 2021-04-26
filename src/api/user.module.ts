@@ -4,10 +4,11 @@ import {User} from '../infrastructure/user.entity';
 import {UserGateway} from './gateways/user.gateway';
 import {IUserServiceProvider} from '../core/primary-ports/user.service.interface';
 import {UserService} from '../core/services/user.service';
+import {Message} from '../infrastructure/message.entity';
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User])],
+    imports: [TypeOrmModule.forFeature([User, Message])],
     providers:
         [
             UserGateway,
