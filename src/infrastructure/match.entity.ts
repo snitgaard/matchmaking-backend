@@ -9,7 +9,7 @@ export class Match {
   @OneToMany(() => User, (user: User) => user.matches)
   public winner: User;
 
-  @Column({ unique: false })
+  @OneToMany(() => User, (user: User) => user.matches)
   public loser: User;
 
   @Column({ unique: false })
