@@ -10,6 +10,9 @@ import {
   IUserService,
   IUserServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
+import {UserModel} from '../../core/models/user.model';
+import {UserDTO} from '../dto/user.dto';
+import {Socket} from 'socket.io';
 
 @WebSocketGateway()
 export class UserGateway {
@@ -18,4 +21,25 @@ export class UserGateway {
   ) {}
 
   @WebSocketServer() server;
+
+  @SubscribeMessage('user')
+  async handleUserEvent(
+      @MessageBody() userModel: UserModel,
+      @ConnectedSocket() user: Socket,
+  ): Promise<void> {
+
+    try {
+      const userClient = await this.userService.createUser(user.id, userModel);
+      const userClients = await this.userService.getUsers();
+      const userDTO: UserDTO = {
+        users: userClients,
+        user: userClient
+      };
+      user.emit('userDTO', userDTO);
+      this.server.emit('users', userClients)
+    } catch(e)
+    {
+      console.log("Couldn't create")
+    }
+  }
 }
