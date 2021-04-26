@@ -1,6 +1,5 @@
-import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
-import {Message} from './message.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Message } from './message.entity';
 import { Match } from './match.entity';
 
 @Entity()
@@ -25,7 +24,7 @@ export class User {
 
   @OneToMany(() => Message, (message: Message) => message.user)
   public messages: Message[];
-  
+
   @OneToMany(() => Match, (match: Match) => match.winner)
   public matches: Match[];
 }
