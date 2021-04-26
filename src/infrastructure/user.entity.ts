@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
+import {Message} from './message.entity';
 
 @Entity()
 export class User {
@@ -20,4 +21,6 @@ export class User {
     @Column({ unique: false })
     public inQueue: boolean;
 
+    @OneToMany(() => Message, (message: Message) => message.user)
+    public messages: Message[];
 }
