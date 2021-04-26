@@ -6,6 +6,9 @@ import { IUserServiceProvider } from '../core/primary-ports/user.service.interfa
 import { UserService } from '../core/services/user.service';
 import { Message } from '../infrastructure/message.entity';
 import { Match } from '../infrastructure/match.entity';
+import { MatchGateway } from './gateways/match.gateway';
+import { IMatchServiceProvider } from '../core/primary-ports/match.service.interface';
+import { MatchService } from '../core/services/match.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Message, Match])],
@@ -14,6 +17,11 @@ import { Match } from '../infrastructure/match.entity';
     {
       provide: IUserServiceProvider,
       useClass: UserService,
+    },
+    MatchGateway,
+    {
+      provide: IMatchServiceProvider,
+      useClass: MatchService,
     },
   ],
 })
