@@ -11,8 +11,8 @@ import {
   IMatchServiceProvider,
 } from '../../core/primary-ports/match.service.interface';
 import { MatchGames } from '../../core/models/match.model';
-import { Socket } from 'socket.io';
 import { MatchDto } from '../dto/match.dto';
+import { Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class MatchGateway {
