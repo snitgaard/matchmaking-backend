@@ -10,7 +10,7 @@ import {IUserService} from '../primary-ports/user.service.interface';
 @Injectable()
 export class UserService implements IUserService {
     allMessages: UserMessage[] = [];
-    clients: UserModel[] = [];
+    users: UserModel[] = [];
 
     constructor(
         @InjectRepository(User)
@@ -69,6 +69,7 @@ export class UserService implements IUserService {
     async getUsers(): Promise<UserModel[]> {
         const users = await this.userRepository.find();
         const userEntities: UserModel[] = JSON.parse(JSON.stringify(users));
+
         return userEntities;
     }
 

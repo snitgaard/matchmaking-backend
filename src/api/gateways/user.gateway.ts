@@ -27,8 +27,9 @@ export class UserGateway {
       @MessageBody() userModel: UserModel,
       @ConnectedSocket() user: Socket,
   ): Promise<void> {
-
+    console.log('hello')
     try {
+      console.log('hello')
       const userClient = await this.userService.createUser(user.id, userModel);
       const userClients = await this.userService.getUsers();
       const userDTO: UserDTO = {
@@ -37,9 +38,23 @@ export class UserGateway {
       };
       user.emit('userDTO', userDTO);
       this.server.emit('users', userClients)
+
     } catch(e)
     {
-      console.log("Couldn't create")
+      console.log("Couldnt create")
+    }
+  }
+  @SubscribeMessage('welcomeUser')
+  async handleWelcomeEvent(
+      @ConnectedSocket() user: Socket,
+  ): Promise<void> {
+    try {
+      const userClients = await this.userService.getUsers();
+      user.emit('users', userClients)
+
+    } catch(e)
+    {
+      console.log("Couldnt fetch")
     }
   }
 }
