@@ -43,7 +43,9 @@ export class UserService implements IUserService {
                 password: user.password,
                 rating: user.rating,
                 inGame: user.inGame,
-                inQueue: user.inQueue
+                inQueue: user.inQueue,
+                matches: user.matches,
+                messages: user.messages
             };
         }
         if(userDb.id === id)
