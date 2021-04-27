@@ -1,9 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
 export class Match {
-  @PrimaryColumn({ unique: true })
+  @PrimaryGeneratedColumn("uuid")
   public id: string;
 
   @OneToMany(() => User, (user: User) => user.matches)

@@ -1,10 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from 'typeorm';
 import { Message } from './message.entity';
 import { Match } from './match.entity';
 
 @Entity()
 export class User {
-  @PrimaryColumn({ unique: true })
+  @PrimaryGeneratedColumn("uuid")
   public id: string;
 
   @Column({ unique: true })

@@ -1,5 +1,5 @@
 import {Message} from '../../infrastructure/message.entity';
-import {Match} from './match.model';
+import {Match} from '../../infrastructure/match.entity';
 
 export interface UserModel{
     id: string;
