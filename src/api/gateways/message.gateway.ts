@@ -49,10 +49,25 @@ export class MessageGateway {
     }
   }
 
+  @SubscribeMessage('welcomeMessage')
+  async handleWelcomeMessageEvent(
+      @ConnectedSocket() message: Socket
+  ): Promise<void> {
+    try {
+      const messages = await this.messageService.getMessages();
+      message.emit('messages', messages)
+    } catch(e)
+    {
+      console.log("Could not fetch messages")
+    }
+  }
+
   async handleConnection(client: Socket, ...args: any[]): Promise<any> {
     client.emit('allMessages', this.messageService.getMessages());
     this.server.emit('users', await this.userService.getUsers());
   }
+
+
 
   handleDisconnect(client: any): any {
     return client;
