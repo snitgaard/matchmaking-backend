@@ -1,4 +1,4 @@
-export interface MessageDto {
+export interface ChatDto {
   message: string;
   userClientId: string;
 }

@@ -2,7 +2,7 @@ import { IMatchService } from '../primary-ports/match.service.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../../infrastructure/match.entity';
-import { MatchGames } from '../models/match.model';
+import { MatchModel } from '../models/match.model';
 
 export class MatchService implements IMatchService {
   constructor(
@@ -10,18 +10,18 @@ export class MatchService implements IMatchService {
     private matchRepository: Repository<Match>,
   ) {}
 
-  async getMatches(): Promise<MatchGames[]> {
+  async getMatches(): Promise<MatchModel[]> {
     const matches = await this.matchRepository.find();
     const matchEntities: Match[] = JSON.parse(JSON.stringify(matches));
     return matchEntities;
   }
 
-  async newMatch(id: string, matchGame: MatchGames): Promise<MatchGames> {
+  async createMatch(id: string, matchModel: MatchModel): Promise<MatchModel> {
     let match = this.matchRepository.create();
     match.id = id;
-    match.winner = matchGame.winner;
-    match.loser = matchGame.loser;
-    match.score = matchGame.score;
+    match.winner = matchModel.winner;
+    match.loser = matchModel.loser;
+    match.score = matchModel.score;
     match = await this.matchRepository.save(match);
     return {
       id: '' + match.id,

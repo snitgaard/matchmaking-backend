@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
-export class Message {
+export class Chat {
   @PrimaryColumn({ unique: false })
   public message: string;
 

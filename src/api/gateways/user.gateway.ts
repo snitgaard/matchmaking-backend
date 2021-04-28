@@ -11,11 +11,9 @@ import {
   IUserService,
   IUserServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
-
 import {UserModel} from '../../core/models/user.model';
 import {UserDTO} from '../dto/user.dto';
 import {Socket} from 'socket.io';
-import { MessageDto } from '../dto/message.dto';
 
 
 @WebSocketGateway()
@@ -24,71 +22,41 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
 
   @WebSocketServer() server;
 
-  @SubscribeMessage('message')
-  async handleMessageEvent(
-    @MessageBody() message: MessageDto,
-    @ConnectedSocket() client: Socket,
-  ): Promise<void> {
-    const userMessage = await this.userService.newMessage(
-      message.message,
-      message.userClientId,
-    );
-    this.server.emit('newMessage', userMessage);
-  }
-
-  @SubscribeMessage('user')
-  async handleUserEvent(
+  @SubscribeMessage('create-user')
+  async createUserEvent(
     @MessageBody() userModel: UserModel,
-    @ConnectedSocket() user: Socket,
+    @ConnectedSocket() userSocket: Socket,
   ): Promise<void> {
     try {
-      console.log('hello1');
-      const userClient = await this.userService.createUser(user.id, userModel);
-      console.log('hello2');
-      const userClients = await this.userService.getUsers();
-      console.log('hello3');
+      const user = await this.userService.createUser(userSocket.id, userModel);
+      const users = await this.userService.getUsers();
       const userDTO: UserDTO = {
-        users: userClients,
-        messages: await this.userService.getMessages(),
-        user: userClient
-
+        users: users,
+        user: user
       };
-      console.log('hello4');
-      user.emit('userDTO', userDTO);
-      this.server.emit('users', userClients);
+      userSocket.emit('userDTO', userDTO);
+      this.server.emit('users', users);
     } catch (e) {
-      console.log('Couldnt create');
+      console.log('Could not create user');
     }
   }
-  @SubscribeMessage('welcomeUser')
-  async handleWelcomeEvent(@ConnectedSocket() user: Socket): Promise<void> {
+  @SubscribeMessage('getAllUsers')
+  async getAllUsersEvent(@ConnectedSocket() userSocket: Socket): Promise<void> {
     try {
-      const userClients = await this.userService.getUsers();
-      user.emit('users', userClients);
+      const users = await this.userService.getUsers();
+      userSocket.emit('users', users);
     } catch (e) {
-      console.log('Couldnt fetch');
+      console.log('Could not fetch users');
     }
   }
 
-  @SubscribeMessage('typing')
-  async handleTypingEvent(
-    @MessageBody() typing: boolean,
-    @ConnectedSocket() client: Socket,
-  ): Promise<void> {
-    console.log('typing', typing);
-    const userClients = await this.userService.updateTyping(typing, client.id);
-    if(userClients) {
-      this.server.emit('userTyping', userClients);
-    }
-  }
-  async handleConnection(user: Socket, ...args: any[]): Promise<any> {
-    user.emit('allMessages', this.userService.getMessages());
+  async handleConnection(userSocket: Socket, ...args: any[]): Promise<any> {
     this.server.emit('users', await this.userService.getUsers());
   }
 
-  async handleDisconnect(user: Socket): Promise<any> {
-    await this.userService.delete(user.id);
+  async handleDisconnect(userSocket: Socket): Promise<any> {
+    await this.userService.disconnectUser(userSocket.id);
     this.server.emit('users', await this.userService.getUsers());
-    console.log('users disconnect:', user.id);
+    console.log('users disconnect:', userSocket.id);
   }
 }

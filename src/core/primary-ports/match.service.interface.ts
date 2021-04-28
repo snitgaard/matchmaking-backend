@@ -1,8 +1,8 @@
-import { MatchGames } from '../models/match.model';
+import { MatchModel } from '../models/match.model';
 
 export const IMatchServiceProvider = 'IMatchServiceProvider';
 export interface IMatchService {
-  getMatches(): Promise<MatchGames[]>;
+  getMatches(): Promise<MatchModel[]>;
 
-  newMatch(id: string, match: MatchGames): Promise<MatchGames>;
+  createMatch(id: string, match: MatchModel): Promise<MatchModel>;
 }

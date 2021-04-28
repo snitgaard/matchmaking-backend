@@ -1,4 +1,4 @@
-import { Message } from '../../infrastructure/message.entity';
+import { Chat } from '../../infrastructure/chat.entity';
 import { Match } from '../../infrastructure/match.entity';
 
 export interface UserModel {
@@ -8,7 +8,7 @@ export interface UserModel {
   rating: number;
   inGame?: boolean;
   inQueue?: boolean;
-  messages?: Message[];
+  messages?: Chat[];
   matches?: Match[];
   typing?: boolean;
 }

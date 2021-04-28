@@ -1,54 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { UserMessage } from '../models/user-message.model';
 import { UserModel } from '../models/user.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../infrastructure/user.entity';
 import { Repository } from 'typeorm';
-import { Message } from '../../infrastructure/message.entity';
 import { IUserService } from '../primary-ports/user.service.interface';
 
 @Injectable()
 export class UserService implements IUserService {
-  allMessages: UserMessage[] = [];
-  users: UserModel[] = [];
 
+
+  users: UserModel[] = [];
+  DEFAULT_RATING: number = 1000;
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Message)
-    private messageRepository: Repository<Message>,
   ) {}
 
 
-    async getMessages(): Promise<UserMessage[]> {
-        const messages = await this.messageRepository.find();
-        const userMessages: UserMessage[] = JSON.parse(JSON.stringify(messages));
-        return userMessages;
-    }
 
-    async newMessage(
-      messageString: string,
-      senderId: string,
-    ): Promise<UserMessage> {
-        let message: Message = this.messageRepository.create();
-        message.message = messageString;
-
-        message.user = await this.userRepository.findOne({ id: senderId });
-        message.date = Date.now();
-        message = await this.messageRepository.save(message);
-
-        return {
-            message: message.message,
-            user: message.user,
-            date: message.date,
-        };
-    }
-    async delete(id: string): Promise<void> {
+  async disconnectUser(id: string): Promise<void> {
         await this.userRepository.delete({id: id});
         this.users = this.users.filter((c) => c.id !== id);
     }
 
-   
   async createUser(id: string, userModel: UserModel): Promise<UserModel> {
     const userDb = await this.userRepository.findOne({
       username: userModel.username,
@@ -57,11 +31,10 @@ export class UserService implements IUserService {
       let user = this.userRepository.create();
       user.username = userModel.username;
       user.password = userModel.password;
-      user.rating = 1000;
+      user.rating = this.DEFAULT_RATING;
       user.inGame = false;
       user.inQueue = false;
       user.matches = userModel.matches;
-      user.messages = userModel.messages;
       user = await this.userRepository.save(user);
       return {
         id: '' + user.id,
@@ -71,7 +44,6 @@ export class UserService implements IUserService {
         inGame: user.inGame,
         inQueue: user.inQueue,
         matches: user.matches,
-        messages: user.messages,
       };
     }
     if (userDb.id === id) {
@@ -82,7 +54,6 @@ export class UserService implements IUserService {
         rating: userDb.rating,
         inQueue: userDb.inQueue,
         inGame: userDb.inGame,
-        messages: userDb.messages,
         matches: userDb.matches,
       };
     } else {
@@ -94,22 +65,10 @@ export class UserService implements IUserService {
   async getUsers(): Promise<UserModel[]> {
     const users = await this.userRepository.find();
     const userEntities: UserModel[] = JSON.parse(JSON.stringify(users));
-
     return userEntities;
   }
 
-
-    async updateTyping(typing: boolean, id: string): Promise<UserModel> {
-        const users = await this.userRepository.find();
-        const userEntities: UserModel[] = JSON.parse(JSON.stringify(users));
-
-        const userEntitie = await userEntities.find((c) => c.id === id);
-        if(userEntitie && userEntitie.typing !== typing) {
-            userEntitie.typing = typing;
-            return userEntitie
-        }
-    }
-    async getUser(id: string): Promise<UserModel> {
+  async getUserById(id: string): Promise<UserModel> {
         const userDb = await this.userRepository.findOne({id: id})
         const userModel: UserModel = {
             id: userDb.id,
@@ -118,7 +77,6 @@ export class UserService implements IUserService {
             rating: userDb.rating,
             inQueue: userDb.inQueue,
             inGame: userDb.inGame,
-            messages: userDb.messages,
             matches: userDb.matches
         };
         return userModel;

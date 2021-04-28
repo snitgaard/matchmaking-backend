@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import {UserModule} from './api/user.module';
+import {MainModule} from './api/mainModule';
 import {ConfigModule} from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import {DatabaseModule} from './database.module';
 
 @Module({
-  imports: [UserModule,
+  imports: [MainModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),

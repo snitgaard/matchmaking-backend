@@ -1,37 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { IMessageService } from '../primary-ports/message.service.interface';
-import { UserMessage } from '../models/user-message.model';
+import { IChatService } from '../primary-ports/chat.service.interface';
+import { ChatModel } from '../models/chat.model';
 import { UserModel } from '../models/user.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Message } from '../../infrastructure/message.entity';
+import { Chat } from "../../infrastructure/chat.entity";
 import { Repository } from 'typeorm';
 import { User } from '../../infrastructure/user.entity';
 
 @Injectable()
-export class MessageService implements IMessageService {
+export class ChatService implements IChatService {
   constructor(
-    @InjectRepository(Message)
-    private messageRepository: Repository<Message>,
+    @InjectRepository(Chat)
+    private chatRepository: Repository<Chat>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
-  async getMessages(): Promise<UserMessage[]> {
-    const messages = await this.messageRepository.find();
-    const userMessages: UserMessage[] = JSON.parse(JSON.stringify(messages));
-    return userMessages;
+  async getMessages(): Promise<ChatModel[]> {
+    const messages = await this.chatRepository.find();
+    const chatMessages: ChatModel[] = JSON.parse(JSON.stringify(messages));
+    return chatMessages;
   }
 
-  async newMessage(
-    messageString: string,
-    senderId: string,
-  ): Promise<UserMessage> {
-    let message: Message = this.messageRepository.create();
+  async createMessage(messageString: string, senderId: string): Promise<ChatModel> {
+    let message: Chat = this.chatRepository.create();
     message.message = messageString;
 
     message.user = await this.userRepository.findOne({ id: senderId });
     message.date = Date.now();
-    message = await this.messageRepository.save(message);
+    message = await this.chatRepository.save(message);
 
     return {
       message: message.message,

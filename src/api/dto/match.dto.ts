@@ -1,6 +1,6 @@
-import { MatchGames } from '../../core/models/match.model';
+import { MatchModel } from '../../core/models/match.model';
 
 export interface MatchDto {
-  matches: MatchGames[];
-  match: MatchGames;
+  matches: MatchModel[];
+  match: MatchModel;
 }

@@ -5,7 +5,7 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Message } from './message.entity';
+import { Chat } from './chat.entity';
 import { Match } from './match.entity';
 
 @Entity()
@@ -28,9 +28,7 @@ export class User {
   @Column({ unique: false })
   public inQueue: boolean;
 
-  @OneToMany(() => Message, (message: Message) => message.user)
-  public messages: Message[];
-
+  //Match History
   @OneToMany(() => Match, (match: Match) => match.winner)
   public matches: Match[];
 }

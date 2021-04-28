@@ -10,7 +10,7 @@ import {
   IMatchService,
   IMatchServiceProvider,
 } from '../../core/primary-ports/match.service.interface';
-import { MatchGames } from '../../core/models/match.model';
+import { MatchModel } from '../../core/models/match.model';
 import { MatchDto } from '../dto/match.dto';
 import { Socket } from 'socket.io';
 
@@ -21,33 +21,32 @@ export class MatchGateway {
   ) {}
 
   @WebSocketServer() server;
-  @SubscribeMessage('match')
-  async handleMatchEvent(
-    @MessageBody() matchGame: MatchGames,
-    @ConnectedSocket() match: Socket,
+  @SubscribeMessage('create-match')
+  async createMatchEvent(
+    @MessageBody() matchModel: MatchModel,
+    @ConnectedSocket() matchSocket: Socket,
   ): Promise<void> {
     try {
-      const matchClient = await this.matchService.newMatch(match.id, matchGame);
-      const matchClients = await this.matchService.getMatches();
-
+      const match = await this.matchService.createMatch(matchSocket.id, matchModel);
+      const matches = await this.matchService.getMatches();
       const matchDto: MatchDto = {
-        matches: matchClients,
-        match: matchClient,
+        matches: matches,
+        match: match,
       };
-      match.emit('matchDto', matchDto);
-      this.server.emit('matches', matchClients);
+      matchSocket.emit('matchDto', matchDto);
+      this.server.emit('matches', matches);
     } catch (e) {
       console.log('Error', e);
     }
   }
 
-  @SubscribeMessage('welcomeMatch')
-  async handleWelcomeMatchEvent(
-      @ConnectedSocket() match: Socket
+  @SubscribeMessage('getAllMatches')
+  async getAllMatchesEvent(
+      @ConnectedSocket() matchSocket: Socket
   ): Promise<void> {
     try {
       const matches = await this.matchService.getMatches();
-      match.emit('matches', matches);
+      matchSocket.emit('matches', matches);
     } catch (e)
     {
       console.log("Could not fetch matches")
