@@ -1,6 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayConnection, OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -13,14 +14,25 @@ import {
 import {UserModel} from '../../core/models/user.model';
 import {UserDTO} from '../dto/user.dto';
 import {Socket} from 'socket.io';
+import { MessageDto } from '../dto/message.dto';
 
 @WebSocketGateway()
-export class UserGateway {
-  constructor(
-    @Inject(IUserServiceProvider) private userService: IUserService,
-  ) {}
+export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
+  constructor(@Inject(IUserServiceProvider) private userService: IUserService,) {}
 
   @WebSocketServer() server;
+
+  @SubscribeMessage('message')
+  async handleMessageEvent(
+    @MessageBody() message: MessageDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    const userMessage = await this.userService.newMessage(
+      message.message,
+      message.userClientId,
+    );
+    this.server.emit('newMessage', userMessage);
+  }
 
   @SubscribeMessage('user')
   async handleUserEvent(
@@ -34,6 +46,7 @@ export class UserGateway {
       const userClients = await this.userService.getUsers();
       const userDTO: UserDTO = {
         users: userClients,
+        messages: await this.userService.getMessages(),
         user: userClient
       };
       user.emit('userDTO', userDTO);
@@ -66,7 +79,17 @@ export class UserGateway {
     console.log('typing', typing);
     const userClients = await this.userService.updateTyping(typing, client.id);
     if(userClients) {
-      this.server.emit('clientTyping', userClients);
+      this.server.emit('userTyping', userClients);
     }
+  }
+  async handleConnection(user: Socket, ...args: any[]): Promise<any> {
+    user.emit('allMessages', this.userService.getMessages());
+    this.server.emit('users', await this.userService.getUsers());
+  }
+
+  async handleDisconnect(user: Socket): Promise<any> {
+    await this.userService.delete(user.id);
+    this.server.emit('users', await this.userService.getUsers());
+    console.log('users disconnect:', user.id);
   }
 }

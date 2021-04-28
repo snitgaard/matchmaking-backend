@@ -20,6 +20,34 @@ export class UserService implements IUserService {
     ) {
     }
 
+    async getMessages(): Promise<UserMessage[]> {
+        const messages = await this.messageRepository.find();
+        const userMessages: UserMessage[] = JSON.parse(JSON.stringify(messages));
+        return userMessages;
+    }
+
+    async newMessage(
+      messageString: string,
+      senderId: string,
+    ): Promise<UserMessage> {
+        let message: Message = this.messageRepository.create();
+        message.message = messageString;
+
+        message.user = await this.userRepository.findOne({ id: senderId });
+        message.date = Date.now();
+        message = await this.messageRepository.save(message);
+
+        return {
+            message: message.message,
+            user: message.user,
+            date: message.date,
+        };
+    }
+    async delete(id: string): Promise<void> {
+        await this.userRepository.delete({id: id});
+        this.users = this.users.filter((c) => c.id !== id);
+    }
+
     async createUser(id: string, userModel: UserModel): Promise<UserModel>
     {
         const userDb = await this.userRepository.findOne({
