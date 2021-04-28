@@ -40,4 +40,17 @@ export class MatchGateway {
       console.log('Error', e);
     }
   }
+
+  @SubscribeMessage('welcomeMatch')
+  async handleWelcomeMatchEvent(
+      @ConnectedSocket() match: Socket
+  ): Promise<void> {
+    try {
+      const matches = await this.matchService.getMatches();
+      match.emit('matches', matches);
+    } catch (e)
+    {
+      console.log("Could not fetch matches")
+    }
+  }
 }

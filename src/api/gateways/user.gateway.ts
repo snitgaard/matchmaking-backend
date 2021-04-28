@@ -11,10 +11,12 @@ import {
   IUserService,
   IUserServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
+
 import {UserModel} from '../../core/models/user.model';
 import {UserDTO} from '../dto/user.dto';
 import {Socket} from 'socket.io';
 import { MessageDto } from '../dto/message.dto';
+
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
@@ -36,38 +38,35 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
 
   @SubscribeMessage('user')
   async handleUserEvent(
-      @MessageBody() userModel: UserModel,
-      @ConnectedSocket() user: Socket,
+    @MessageBody() userModel: UserModel,
+    @ConnectedSocket() user: Socket,
   ): Promise<void> {
-    console.log('hello')
     try {
-      console.log('hello')
+      console.log('hello1');
       const userClient = await this.userService.createUser(user.id, userModel);
+      console.log('hello2');
       const userClients = await this.userService.getUsers();
+      console.log('hello3');
       const userDTO: UserDTO = {
         users: userClients,
         messages: await this.userService.getMessages(),
         user: userClient
-      };
-      user.emit('userDTO', userDTO);
-      this.server.emit('users', userClients)
 
-    } catch(e)
-    {
-      console.log("Couldnt create")
+      };
+      console.log('hello4');
+      user.emit('userDTO', userDTO);
+      this.server.emit('users', userClients);
+    } catch (e) {
+      console.log('Couldnt create');
     }
   }
   @SubscribeMessage('welcomeUser')
-  async handleWelcomeEvent(
-      @ConnectedSocket() user: Socket,
-  ): Promise<void> {
+  async handleWelcomeEvent(@ConnectedSocket() user: Socket): Promise<void> {
     try {
       const userClients = await this.userService.getUsers();
-      user.emit('users', userClients)
-
-    } catch(e)
-    {
-      console.log("Couldnt fetch")
+      user.emit('users', userClients);
+    } catch (e) {
+      console.log('Couldnt fetch');
     }
   }
 
