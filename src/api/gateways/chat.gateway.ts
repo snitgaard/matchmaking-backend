@@ -14,14 +14,11 @@ import {
 } from '../../core/primary-ports/chat.service.interface';
 import { ChatDto } from '../dto/chat.dto';
 import { Socket } from 'socket.io';
-import { IUserService } from '../../core/primary-ports/user.service.interface';
 
 @WebSocketGateway()
-export class ChatGateway
-  implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway {
   constructor(
-    @Inject(IChatServiceProvider) private chatService: IChatService,
-    private userService: IUserService,
+    @Inject(IChatServiceProvider) private chatService: IChatService
   ) {}
   @WebSocketServer() server;
   @SubscribeMessage('create-message')
@@ -56,20 +53,10 @@ export class ChatGateway
   ): Promise<void> {
     try {
       const messages = await this.chatService.getMessages();
-      chatSocket.emit('messages', messages)
+      chatSocket.emit('allMessages', messages)
     } catch(e)
     {
       console.log("Could not fetch messages")
     }
-  }
-
-  async handleConnection(chatSocket: Socket, ...args: any[]): Promise<any> {
-    chatSocket.emit('allMessages', this.chatService.getMessages());
-    this.server.emit('users', await this.userService.getUsers());
-  }
-
-  // to be implemented
-  handleDisconnect(client: any): any {
-    return client;
   }
 }

@@ -17,7 +17,7 @@ export class ChatService implements IChatService {
   ) {}
 
   async getMessages(): Promise<ChatModel[]> {
-    const messages = await this.chatRepository.find();
+    const messages = await this.chatRepository.find({ relations: ['user']});
     const chatMessages: ChatModel[] = JSON.parse(JSON.stringify(messages));
     return chatMessages;
   }
