@@ -22,6 +22,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
 
   @WebSocketServer() server;
 
+  // createMessage
   @SubscribeMessage('message')
   async handleMessageEvent(
     @MessageBody() message: MessageDto,
@@ -82,6 +83,21 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
       this.server.emit('userTyping', userClients);
     }
   }
+
+  @SubscribeMessage('getAllMessages')
+  async getAllMessages(
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const messsages = await this.userService.getMessages();
+      client.emit('allMessages', messsages)
+
+    } catch(e)
+    {
+      console.log("Couldnt fetch")
+    }
+  }
+
   async handleConnection(user: Socket, ...args: any[]): Promise<any> {
     user.emit('allMessages', this.userService.getMessages());
     this.server.emit('users', await this.userService.getUsers());

@@ -21,7 +21,7 @@ export class UserService implements IUserService {
     }
 
     async getMessages(): Promise<UserMessage[]> {
-        const messages = await this.messageRepository.find();
+        const messages = await this.messageRepository.find({ relations: ["user"] });
         const userMessages: UserMessage[] = JSON.parse(JSON.stringify(messages));
         return userMessages;
     }

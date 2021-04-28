@@ -17,7 +17,8 @@ export class MessageService implements IMessageService {
   ) {}
 
   async getMessages(): Promise<UserMessage[]> {
-    const messages = await this.messageRepository.find();
+    const messages = await this.messageRepository.find({ relations: ["user"] });
+    console.log('messages', messages);
     const userMessages: UserMessage[] = JSON.parse(JSON.stringify(messages));
     return userMessages;
   }

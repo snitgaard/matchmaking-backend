@@ -17,14 +17,13 @@ import { Socket } from 'socket.io';
 import { IUserService } from '../../core/primary-ports/user.service.interface';
 
 @WebSocketGateway()
-export class MessageGateway
-  implements OnGatewayConnection, OnGatewayDisconnect {
+export class MessageGateway {
   constructor(
     @Inject(IMessageServiceProvider) private messageService: IMessageService,
     private userService: IUserService,
   ) {}
   @WebSocketServer() server;
-  @SubscribeMessage('message')
+  /*@SubscribeMessage('message')
   async handleMessageEvent(
     @MessageBody() message: MessageDto,
     @ConnectedSocket() client: Socket,
@@ -57,5 +56,5 @@ export class MessageGateway
 
   handleDisconnect(client: any): any {
     return client;
-  }
+  }*/
 }
