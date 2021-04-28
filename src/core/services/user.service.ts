@@ -19,6 +19,36 @@ export class UserService implements IUserService {
     private messageRepository: Repository<Message>,
   ) {}
 
+
+    async getMessages(): Promise<UserMessage[]> {
+        const messages = await this.messageRepository.find();
+        const userMessages: UserMessage[] = JSON.parse(JSON.stringify(messages));
+        return userMessages;
+    }
+
+    async newMessage(
+      messageString: string,
+      senderId: string,
+    ): Promise<UserMessage> {
+        let message: Message = this.messageRepository.create();
+        message.message = messageString;
+
+        message.user = await this.userRepository.findOne({ id: senderId });
+        message.date = Date.now();
+        message = await this.messageRepository.save(message);
+
+        return {
+            message: message.message,
+            user: message.user,
+            date: message.date,
+        };
+    }
+    async delete(id: string): Promise<void> {
+        await this.userRepository.delete({id: id});
+        this.users = this.users.filter((c) => c.id !== id);
+    }
+
+   
   async createUser(id: string, userModel: UserModel): Promise<UserModel> {
     const userDb = await this.userRepository.findOne({
       username: userModel.username,
@@ -57,6 +87,7 @@ export class UserService implements IUserService {
       };
     } else {
       throw new Error('User already exists');
+
     }
   }
 
@@ -67,18 +98,32 @@ export class UserService implements IUserService {
     return userEntities;
   }
 
-  async getUser(id: string): Promise<UserModel> {
-    const userDb = await this.userRepository.findOne({ id: id });
-    const userModel: UserModel = {
-      id: userDb.id,
-      username: userDb.username,
-      password: userDb.password,
-      rating: userDb.rating,
-      inQueue: userDb.inQueue,
-      inGame: userDb.inGame,
-      messages: userDb.messages,
-      matches: userDb.matches,
-    };
-    return userModel;
-  }
+
+    async updateTyping(typing: boolean, id: string): Promise<UserModel> {
+        const users = await this.userRepository.find();
+        const userEntities: UserModel[] = JSON.parse(JSON.stringify(users));
+
+        const userEntitie = await userEntities.find((c) => c.id === id);
+        if(userEntitie && userEntitie.typing !== typing) {
+            userEntitie.typing = typing;
+            return userEntitie
+        }
+    }
+    async getUser(id: string): Promise<UserModel> {
+        const userDb = await this.userRepository.findOne({id: id})
+        const userModel: UserModel = {
+            id: userDb.id,
+            username: userDb.username,
+            password: userDb.password,
+            rating: userDb.rating,
+            inQueue: userDb.inQueue,
+            inGame: userDb.inGame,
+            messages: userDb.messages,
+            matches: userDb.matches
+        };
+        return userModel;
+    }
+
+
+
 }
