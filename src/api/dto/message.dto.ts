@@ -1,4 +1,6 @@
+import { MessageService } from "../../core/services/message.service";
+
 export interface MessageDto {
-  message: string;
-  userClientId: string;
+  messages: MessageService[];
+  message: MessageService;
 }
