@@ -57,4 +57,16 @@ export class UserGateway {
       console.log("Couldnt fetch")
     }
   }
+
+  @SubscribeMessage('typing')
+  async handleTypingEvent(
+    @MessageBody() typing: boolean,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    console.log('typing', typing);
+    const userClients = await this.userService.updateTyping(typing, client.id);
+    if(userClients) {
+      this.server.emit('clientTyping', userClients);
+    }
+  }
 }

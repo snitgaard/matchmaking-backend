@@ -8,4 +8,6 @@ export interface IUserService {
     getUsers(): Promise<UserModel[]>;
 
     getUser(id: string): Promise<UserModel>;
+
+    updateTyping(typing: boolean, id: string): Promise<UserModel>;
 }

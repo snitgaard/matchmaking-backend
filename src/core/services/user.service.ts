@@ -73,6 +73,16 @@ export class UserService implements IUserService {
         return userEntities;
     }
 
+    async updateTyping(typing: boolean, id: string): Promise<UserModel> {
+        const users = await this.userRepository.find();
+        const userEntities: UserModel[] = JSON.parse(JSON.stringify(users));
+
+        const userEntitie = await userEntities.find((c) => c.id === id);
+        if(userEntitie && userEntitie.typing !== typing) {
+            userEntitie.typing = typing;
+            return userEntitie
+        }
+    }
     async getUser(id: string): Promise<UserModel> {
         const userDb = await this.userRepository.findOne({id: id})
         const userModel: UserModel = {
