@@ -46,7 +46,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
       const users = await this.userService.getUsers();
       userSocket.emit('users', users);
     } catch (e) {
-      console.log('Could not fetch users');
+      console.log('Could not fetch users ');
     }
   }
 
