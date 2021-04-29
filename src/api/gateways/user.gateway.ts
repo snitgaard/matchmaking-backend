@@ -52,19 +52,6 @@ export class UserGateway implements OnGatewayConnection {
     }
   }
 
-  @SubscribeMessage('getAllMessages')
-  async getAllMessagesEvent(
-    @ConnectedSocket() chatSocket: Socket,
-  ): Promise<void> {
-    try {
-      console.log('Getting some messages');
-      const messages = await this.userService.getMessages();
-      chatSocket.emit('messages', messages);
-    } catch (e) {
-      console.log('Could not fetch messages');
-    }
-  }
-
   async handleConnection(userSocket: Socket, ...args: any[]): Promise<any> {
     this.server.emit('users', await this.userService.getUsers());
   }
