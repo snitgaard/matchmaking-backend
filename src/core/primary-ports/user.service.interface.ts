@@ -11,4 +11,6 @@ export interface IUserService {
     getUserById(id: string): Promise<UserModel>;
 
     disconnectUser(id: string): Promise<void>;
+
+    getMessages(): Promise<ChatModel[]>;
 }

@@ -11,14 +11,16 @@ import {
   IUserService,
   IUserServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
-import {UserModel} from '../../core/models/user.model';
-import {UserDTO} from '../dto/user.dto';
-import {Socket} from 'socket.io';
-
+import { UserModel } from '../../core/models/user.model';
+import { UserDTO } from '../dto/user.dto';
+import { Socket } from 'socket.io';
+import { IChatService } from '../../core/primary-ports/chat.service.interface';
 
 @WebSocketGateway()
-export class UserGateway implements OnGatewayConnection  {
-  constructor(@Inject(IUserServiceProvider) private userService: IUserService,) {}
+export class UserGateway implements OnGatewayConnection {
+  constructor(
+    @Inject(IUserServiceProvider) private userService: IUserService
+  ) {}
 
   @WebSocketServer() server;
 
@@ -32,7 +34,7 @@ export class UserGateway implements OnGatewayConnection  {
       const users = await this.userService.getUsers();
       const userDTO: UserDTO = {
         users: users,
-        user: user
+        user: user,
       };
       userSocket.emit('userDTO', userDTO);
       this.server.emit('users', users);
@@ -50,15 +52,27 @@ export class UserGateway implements OnGatewayConnection  {
     }
   }
 
+  @SubscribeMessage('getAllMessages')
+  async getAllMessagesEvent(
+    @ConnectedSocket() chatSocket: Socket,
+  ): Promise<void> {
+    try {
+      console.log('Getting some messages');
+      const messages = await this.userService.getMessages();
+      chatSocket.emit('messages', messages);
+    } catch (e) {
+      console.log('Could not fetch messages');
+    }
+  }
+
   async handleConnection(userSocket: Socket, ...args: any[]): Promise<any> {
     this.server.emit('users', await this.userService.getUsers());
   }
-/*
+  /*
   async handleDisconnect(userSocket: Socket): Promise<any> {
     await this.userService.disconnectUser(userSocket.id);
     this.server.emit('users', await this.userService.getUsers());
     console.log('users disconnect:', userSocket.id);
   }
   */
-
 }

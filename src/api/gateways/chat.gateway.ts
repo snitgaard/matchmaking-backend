@@ -16,9 +16,9 @@ import { ChatDto } from '../dto/chat.dto';
 import { Socket } from 'socket.io';
 
 @WebSocketGateway()
-export class ChatGateway {
+export class ChatGateway implements OnGatewayConnection {
   constructor(
-    @Inject(IChatServiceProvider) private chatService: IChatService
+    @Inject(IChatServiceProvider) private chatService: IChatService,
   ) {}
   @WebSocketServer() server;
   @SubscribeMessage('create-message')
@@ -38,10 +38,7 @@ export class ChatGateway {
     @MessageBody() typing: boolean,
     @ConnectedSocket() chatSocket: Socket,
   ): Promise<void> {
-    const user = await this.chatService.updateTyping(
-      typing,
-      chatSocket.id,
-    );
+    const user = await this.chatService.updateTyping(typing, chatSocket.id);
     if (user) {
       this.server.emit('userTyping', user);
     }
@@ -49,14 +46,17 @@ export class ChatGateway {
 
   @SubscribeMessage('getAllMessages')
   async getAllMessagesEvent(
-      @ConnectedSocket() chatSocket: Socket
+    @ConnectedSocket() chatSocket: Socket,
   ): Promise<void> {
     try {
       const messages = await this.chatService.getMessages();
-      chatSocket.emit('allMessages', messages)
-    } catch(e)
-    {
-      console.log("Could not fetch messages")
+      chatSocket.emit('messages', messages);
+    } catch (e) {
+      console.log('Could not fetch messages');
     }
+  }
+
+  async handleConnection(chatSocket: Socket, ...args: any[]): Promise<any> {
+    this.server.emit('messages', await this.chatService.getMessages());
   }
 }

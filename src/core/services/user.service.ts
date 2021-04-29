@@ -4,24 +4,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../infrastructure/user.entity';
 import { Repository } from 'typeorm';
 import { IUserService } from '../primary-ports/user.service.interface';
+import { ChatModel } from '../models/chat.model';
+import { Chat } from '../../infrastructure/chat.entity';
 
 @Injectable()
 export class UserService implements IUserService {
-
-
   users: UserModel[] = [];
-  DEFAULT_RATING: number = 1000;
+  DEFAULT_RATING = 1000;
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Chat)
+    private chatRepository: Repository<Chat>,
   ) {}
 
-
-
   async disconnectUser(id: string): Promise<void> {
-        await this.userRepository.delete({id: id});
-        this.users = this.users.filter((c) => c.id !== id);
-    }
+    await this.userRepository.delete({ id: id });
+    this.users = this.users.filter((c) => c.id !== id);
+  }
 
   async createUser(id: string, userModel: UserModel): Promise<UserModel> {
     const userDb = await this.userRepository.findOne({
@@ -58,7 +58,6 @@ export class UserService implements IUserService {
       };
     } else {
       throw new Error('User already exists');
-
     }
   }
 
@@ -69,19 +68,22 @@ export class UserService implements IUserService {
   }
 
   async getUserById(id: string): Promise<UserModel> {
-        const userDb = await this.userRepository.findOne({id: id})
-        const userModel: UserModel = {
-            id: userDb.id,
-            username: userDb.username,
-            password: userDb.password,
-            rating: userDb.rating,
-            inQueue: userDb.inQueue,
-            inGame: userDb.inGame,
-            matches: userDb.matches
-        };
-        return userModel;
-    }
+    const userDb = await this.userRepository.findOne({ id: id });
+    const userModel: UserModel = {
+      id: userDb.id,
+      username: userDb.username,
+      password: userDb.password,
+      rating: userDb.rating,
+      inQueue: userDb.inQueue,
+      inGame: userDb.inGame,
+      matches: userDb.matches,
+    };
+    return userModel;
+  }
 
-
-
+  async getMessages(): Promise<ChatModel[]> {
+    const messages = await this.chatRepository.find({ relations: ['user'] });
+    const chatMessages: ChatModel[] = JSON.parse(JSON.stringify(messages));
+    return chatMessages;
+  }
 }
