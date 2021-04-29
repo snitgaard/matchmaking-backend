@@ -28,7 +28,7 @@ export class ChatGateway {
   ): Promise<void> {
     const chatMessage = await this.chatService.createMessage(
       chatDto.message,
-      chatDto.userClientId,
+      chatDto.userId,
     );
     this.server.emit('messages', chatMessage);
   }

@@ -6,7 +6,7 @@ export class Chat {
   @PrimaryColumn({ unique: false })
   public message: string;
 
-  @ManyToOne(() => User, (user: User) => user.messages)
+  @ManyToOne(() => User)
   public user: User;
 
   @Column({ unique: false, type: 'bigint' })

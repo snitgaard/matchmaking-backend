@@ -22,11 +22,11 @@ export class ChatService implements IChatService {
     return chatMessages;
   }
 
-  async createMessage(messageString: string, senderId: string): Promise<ChatModel> {
+  async createMessage(messageString: string, userId: string): Promise<ChatModel> {
     let message: Chat = this.chatRepository.create();
     message.message = messageString;
 
-    message.user = await this.userRepository.findOne({ id: senderId });
+    message.user = await this.userRepository.findOne({ id: userId });
     message.date = Date.now();
     message = await this.chatRepository.save(message);
 

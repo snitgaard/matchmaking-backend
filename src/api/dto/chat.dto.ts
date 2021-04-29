@@ -1,4 +1,4 @@
 export interface ChatDto {
   message: string;
-  userClientId: string;
+  userId: string;
 }

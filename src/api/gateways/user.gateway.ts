@@ -1,7 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection, OnGatewayDisconnect,
+  OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -17,7 +17,7 @@ import {Socket} from 'socket.io';
 
 
 @WebSocketGateway()
-export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
+export class UserGateway implements OnGatewayConnection  {
   constructor(@Inject(IUserServiceProvider) private userService: IUserService,) {}
 
   @WebSocketServer() server;
@@ -53,10 +53,12 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect  {
   async handleConnection(userSocket: Socket, ...args: any[]): Promise<any> {
     this.server.emit('users', await this.userService.getUsers());
   }
-
+/*
   async handleDisconnect(userSocket: Socket): Promise<any> {
     await this.userService.disconnectUser(userSocket.id);
     this.server.emit('users', await this.userService.getUsers());
     console.log('users disconnect:', userSocket.id);
   }
+  */
+
 }
