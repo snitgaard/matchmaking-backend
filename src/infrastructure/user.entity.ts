@@ -1,6 +1,6 @@
 import {
   Column,
-  Entity,
+  Entity, ManyToOne,
   OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
@@ -27,6 +27,9 @@ export class User {
 
   @Column({ unique: false })
   public inQueue: boolean;
+
+  @OneToMany(() => Chat, (chat: Chat) => chat.user)
+  public chat: Chat[];
 
   //Match History
   @OneToMany(() => Match, (match: Match) => match.winner)
