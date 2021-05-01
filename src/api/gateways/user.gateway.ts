@@ -1,7 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
+  OnGatewayConnection, OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -18,7 +18,7 @@ import { IChatService } from '../../core/primary-ports/chat.service.interface';
 import {ConnectUserDto} from '../dto/connect-user.dto';
 
 @WebSocketGateway()
-export class UserGateway implements OnGatewayConnection {
+export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(IUserServiceProvider) private userService: IUserService
   ) {}
@@ -80,13 +80,13 @@ export class UserGateway implements OnGatewayConnection {
   }
 
   async handleConnection(userSocket: Socket, ...args: any[]): Promise<any> {
+    console.log('Client connect:', userSocket.id);
     this.server.emit('users', await this.userService.getUsers());
   }
-  /*
+
   async handleDisconnect(userSocket: Socket): Promise<any> {
     await this.userService.disconnectUser(userSocket.id);
     this.server.emit('users', await this.userService.getUsers());
     console.log('users disconnect:', userSocket.id);
   }
-  */
 }

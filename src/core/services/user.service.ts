@@ -48,7 +48,7 @@ export class UserService implements IUserService {
                 matches: user.matches,
             };
         }
-        /*if (userDb.username === userModel.username && userDb.password === userModel.password) {
+        if (userDb.username === userModel.username && userDb.password === userModel.password) {
           console.log(userDb)
           return {
             id: userDb.id,
@@ -62,7 +62,6 @@ export class UserService implements IUserService {
         } else {
           throw new Error('User already exists');
         }
-         */
     }
 
     async login(id: string, userModel: UserModel): Promise<UserModel> {
