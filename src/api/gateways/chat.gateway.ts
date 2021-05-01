@@ -30,6 +30,7 @@ export class ChatGateway implements OnGatewayConnection {
       chatDto.message,
       chatDto.userId,
     );
+
     this.server.emit('messages', chatMessage);
   }
 

@@ -15,6 +15,7 @@ import { UserModel } from '../../core/models/user.model';
 import { UserDTO } from '../dto/user.dto';
 import { Socket } from 'socket.io';
 import { IChatService } from '../../core/primary-ports/chat.service.interface';
+import {ConnectUserDto} from '../dto/connect-user.dto';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection {
@@ -42,6 +43,32 @@ export class UserGateway implements OnGatewayConnection {
       console.log('Could not create user');
     }
   }
+  @SubscribeMessage('connect-user')
+  async handleJoinChatEvent(
+      @MessageBody() connectUserDto: ConnectUserDto,
+      @ConnectedSocket() userSocket: Socket,
+  ): Promise<void> {
+    try {
+      console.log("Hello1")
+      let userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
+      const user = await this.userService.login(userSocket.id, userModel);
+      console.log("Hello2")
+      const users = await this.userService.getUsers();
+      const userDTO: UserDTO = {
+        users: users,
+        user: user,
+      };
+      console.log("Hello3")
+      userSocket.emit('userDTO', userDTO)
+      this.server.emit('users', user);
+    }
+    catch (e) {
+      userSocket._error(e.message);
+    }
+  }
+
+
+
   @SubscribeMessage('getAllUsers')
   async getAllUsersEvent(@ConnectedSocket() userSocket: Socket): Promise<void> {
     try {
