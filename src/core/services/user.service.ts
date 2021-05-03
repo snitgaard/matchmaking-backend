@@ -11,6 +11,7 @@ import {Chat} from '../../infrastructure/chat.entity';
 export class UserService implements IUserService {
     users: UserModel[] = [];
     DEFAULT_RATING = 1000;
+    tokenList: string[] = [];
 
     constructor(
         @InjectRepository(User)
@@ -79,7 +80,7 @@ export class UserService implements IUserService {
                 matches: userDb.matches,
             };
         } else {
-            throw new Error('User already exists');
+            throw new Error('Cannot Login');
         }
     }
 

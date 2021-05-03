@@ -16,6 +16,7 @@ import { UserDTO } from '../dto/user.dto';
 import { Socket } from 'socket.io';
 import { IChatService } from '../../core/primary-ports/chat.service.interface';
 import {ConnectUserDto} from '../dto/connect-user.dto';
+import {AuthUserModel} from '../../core/models/auth-user.model';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -53,21 +54,18 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
       const user = await this.userService.login(userSocket.id, userModel);
       console.log("Hello2")
-      const users = await this.userService.getUsers();
-      const userDTO: UserDTO = {
-        users: users,
-        user: user,
+      const authUser: AuthUserModel = {
+        username: user.username,
+        password: user.password
       };
-      console.log("Hello3")
-      userSocket.emit('userDTO', userDTO)
-      this.server.emit('users', user);
+      console.log(authUser)
+      userSocket.emit('iamconnected', authUser)
+      this.server.emit('users', await this.userService.getUsers());
     }
     catch (e) {
-      userSocket._error(e.message);
+      console.log('Incorrect information')
     }
   }
-
-
 
   @SubscribeMessage('getAllUsers')
   async getAllUsersEvent(@ConnectedSocket() userSocket: Socket): Promise<void> {
