@@ -3,7 +3,7 @@ import { UserModel } from '../models/user.model';
 
 export const IChatServiceProvider = 'IChatServiceProvider';
 export interface IChatService {
-  createMessage(messageString: string, senderId: string): Promise<ChatModel>;
+  createMessage(messageString: string, userId: string): Promise<ChatModel>;
 
   getMessages(): Promise<ChatModel[]>;
 

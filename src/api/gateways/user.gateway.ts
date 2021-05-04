@@ -55,6 +55,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const user = await this.userService.login(userSocket.id, userModel);
       console.log("Hello2")
       const authUser: AuthUserModel = {
+        id: user.id,
         username: user.username,
         password: user.password
       };
