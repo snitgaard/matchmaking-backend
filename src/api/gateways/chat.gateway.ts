@@ -16,7 +16,7 @@ import { ChatDto } from '../dto/chat.dto';
 import { Socket } from 'socket.io';
 
 @WebSocketGateway()
-export class ChatGateway implements OnGatewayConnection {
+export class ChatGateway {
   constructor(
     @Inject(IChatServiceProvider) private chatService: IChatService,
   ) {}
@@ -30,8 +30,7 @@ export class ChatGateway implements OnGatewayConnection {
       chatDto.message,
       chatDto.userId,
     );
-
-    this.server.emit('messages', chatMessage);
+    this.server.emit('new-message', chatMessage);
   }
 
   @SubscribeMessage('typing')
@@ -55,9 +54,5 @@ export class ChatGateway implements OnGatewayConnection {
     } catch (e) {
       console.log('Could not fetch messages');
     }
-  }
-
-  async handleConnection(chatSocket: Socket, ...args: any[]): Promise<any> {
-    this.server.emit('messages', await this.chatService.getMessages());
   }
 }

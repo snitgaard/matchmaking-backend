@@ -23,7 +23,7 @@ export class ChatService implements IChatService {
   }
 
   async createMessage(messageString: string, userId: string): Promise<ChatModel> {
-    let message: Chat = this.chatRepository.create();
+    let message: Chat = await this.chatRepository.create();
     message.message = messageString;
 
     message.user = await this.userRepository.findOne({ id: userId });
