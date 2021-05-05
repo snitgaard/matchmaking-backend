@@ -1,7 +1,8 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection, OnGatewayDisconnect,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -15,13 +16,13 @@ import { UserModel } from '../../core/models/user.model';
 import { UserDTO } from '../dto/user.dto';
 import { Socket } from 'socket.io';
 import { IChatService } from '../../core/primary-ports/chat.service.interface';
-import {ConnectUserDto} from '../dto/connect-user.dto';
-import {AuthUserModel} from '../../core/models/auth-user.model';
+import { ConnectUserDto } from '../dto/connect-user.dto';
+import { AuthUserModel } from '../../core/models/auth-user.model';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    @Inject(IUserServiceProvider) private userService: IUserService
+    @Inject(IUserServiceProvider) private userService: IUserService,
   ) {}
 
   @WebSocketServer() server;
@@ -46,25 +47,24 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   @SubscribeMessage('connect-user')
   async handleJoinChatEvent(
-      @MessageBody() connectUserDto: ConnectUserDto,
-      @ConnectedSocket() userSocket: Socket,
+    @MessageBody() connectUserDto: ConnectUserDto,
+    @ConnectedSocket() userSocket: Socket,
   ): Promise<void> {
     try {
-      console.log("Hello1")
-      let userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
+      console.log('Hello1');
+      const userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
       const user = await this.userService.login(userSocket.id, userModel);
-      console.log("Hello2")
+      console.log('Hello2');
       const authUser: AuthUserModel = {
         id: user.id,
         username: user.username,
-        password: user.password
+        password: user.password,
       };
-      console.log(authUser)
-      userSocket.emit('iamconnected', authUser)
+      console.log(authUser);
+      userSocket.emit('iamconnected', authUser);
       this.server.emit('users', await this.userService.getUsers());
-    }
-    catch (e) {
-      console.log('Incorrect information')
+    } catch (e) {
+      console.log('Incorrect information');
     }
   }
 
