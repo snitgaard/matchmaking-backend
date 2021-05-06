@@ -14,5 +14,7 @@ export interface IUserService {
 
     getMessages(): Promise<ChatModel[]>;
 
+    updateUser(id: string, user: UserModel): Promise<UserModel>
+
     login(id: string, userModel: UserModel): Promise<UserModel>
 }

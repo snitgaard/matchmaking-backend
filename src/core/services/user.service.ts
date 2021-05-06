@@ -109,4 +109,15 @@ export class UserService implements IUserService {
         const chatMessages: ChatModel[] = JSON.parse(JSON.stringify(messages));
         return chatMessages;
     }
+
+    async updateUser(id: string, user: UserModel): Promise<UserModel> {
+        await this.userRepository.update(id, user);
+        const updatedUser = await this.userRepository.findOne(id);
+        if (updatedUser) {
+            return updatedUser;
+        }
+        else {
+            throw new Error('Updated user not found');
+        }
+    }
 }

@@ -17,6 +17,7 @@ import { Socket } from 'socket.io';
 import { IChatService } from '../../core/primary-ports/chat.service.interface';
 import {ConnectUserDto} from '../dto/connect-user.dto';
 import {AuthUserModel} from '../../core/models/auth-user.model';
+import {User} from '../../infrastructure/user.entity';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -54,10 +55,13 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
       const user = await this.userService.login(userSocket.id, userModel);
       console.log("Hello2")
-      const authUser: AuthUserModel = {
+      const authUser: UserModel = {
         id: user.id,
         username: user.username,
-        password: user.password
+        password: user.password,
+        rating: user.rating,
+        inQueue: user.inQueue,
+        inGame: user.inGame
       };
       console.log(authUser)
       userSocket.emit('iamconnected', authUser)
@@ -65,6 +69,25 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     catch (e) {
       console.log('Incorrect information')
+    }
+  }
+  @SubscribeMessage('updateUser')
+  async handleUpdateUserEvent(
+      @MessageBody() userModel: UserModel,
+      @ConnectedSocket() userSocket: Socket,
+  ): Promise<void> {
+    try {
+      console.log('', userModel);
+      const userUpdate = await this.userService.updateUser(userModel.id, userModel);
+      const users = await this.userService.getUsers();
+      const userDTO: UserDTO= {
+        users: users,
+        user: userUpdate
+      };
+      userSocket.emit('userDTO', userDTO);
+      this.server.emit('users', users);
+    } catch (e) {
+      console.log('Error', e);
     }
   }
 
