@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 import { Match } from '../../infrastructure/match.entity';
 import { MatchModel } from '../models/match.model';
 import { UserModel } from "../models/user.model";
+import { User } from "../../infrastructure/user.entity";
 
 export class MatchService implements IMatchService {
   constructor(
     @InjectRepository(Match)
     private matchRepository: Repository<Match>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async getMatches(): Promise<MatchModel[]> {
@@ -33,8 +36,8 @@ export class MatchService implements IMatchService {
   }
 
   async getMatchesForUser(id: string): Promise<MatchModel[]> {
-    const matches = await this.matchRepository.find({id: id})
-    const userMatch: MatchModel[] = JSON.parse(JSON.stringify(matches));
+    const winner = await this.userRepository.find({id: id})
+    const userMatch: MatchModel[] = JSON.parse(JSON.stringify(winner));
     return userMatch;
   }
 }
