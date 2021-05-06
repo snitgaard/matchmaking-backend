@@ -38,6 +38,7 @@ export class UserService implements IUserService {
             user.inGame = false;
             user.inQueue = false;
             user.matches = userModel.matches;
+            user.isActive = false;
             user = await this.userRepository.save(user);
             return {
                 id: '' + user.id,
@@ -47,21 +48,8 @@ export class UserService implements IUserService {
                 inGame: user.inGame,
                 inQueue: user.inQueue,
                 matches: user.matches,
+                isActive: user.isActive,
             };
-        }
-        if (userDb.username === userModel.username && userDb.password === userModel.password) {
-          console.log(userDb)
-          return {
-            id: userDb.id,
-            username: userDb.username,
-            password: userDb.password,
-            rating: userDb.rating,
-            inQueue: userDb.inQueue,
-            inGame: userDb.inGame,
-            matches: userDb.matches,
-          };
-        } else {
-          throw new Error('User already exists');
         }
     }
 
@@ -78,6 +66,7 @@ export class UserService implements IUserService {
                 inQueue: userDb.inQueue,
                 inGame: userDb.inGame,
                 matches: userDb.matches,
+                isActive: userDb.isActive
             };
         } else {
             throw new Error('Cannot Login');
@@ -100,6 +89,7 @@ export class UserService implements IUserService {
             inQueue: userDb.inQueue,
             inGame: userDb.inGame,
             matches: userDb.matches,
+            isActive: userDb.isActive
         };
         return userModel;
     }

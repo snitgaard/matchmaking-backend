@@ -28,6 +28,9 @@ export class User {
   @Column({ unique: false })
   public inQueue: boolean;
 
+  @Column({ unique: false })
+  public isActive: boolean;
+
   @OneToMany(() => Chat, (chat: Chat) => chat.user)
   public chat: Chat[];
 

@@ -11,4 +11,5 @@ export interface UserModel {
   messages?: Chat[];
   matches?: Match[];
   typing?: boolean;
+  isActive?: boolean;
 }
