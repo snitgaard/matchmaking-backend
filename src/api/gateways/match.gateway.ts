@@ -13,6 +13,8 @@ import {
 import { MatchModel } from '../../core/models/match.model';
 import { MatchDto } from '../dto/match.dto';
 import { Socket } from 'socket.io';
+import { ChatDto } from "../dto/chat.dto";
+import { MatchUserDto } from "../dto/matchUser.dto";
 
 @WebSocketGateway()
 export class MatchGateway {
@@ -50,6 +52,21 @@ export class MatchGateway {
     } catch (e)
     {
       console.log("Could not fetch matches")
+    }
+  }
+
+  @SubscribeMessage('getUserMatches')
+  async getUserMatchesEvent(
+    @MessageBody() matchUserDto: MatchUserDto,
+    @ConnectedSocket() matchSocket: Socket
+  ): Promise<void> {
+    try{
+    const userMatches = await this.matchService.getMatchesForUser(
+      matchUserDto.winnerId
+    );
+    matchSocket.emit('matches', userMatches);
+    } catch (e) {
+      console.log("Could not fetch match history")
     }
   }
 }

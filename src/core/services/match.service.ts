@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../../infrastructure/match.entity';
 import { MatchModel } from '../models/match.model';
+import { UserModel } from "../models/user.model";
 
 export class MatchService implements IMatchService {
   constructor(
@@ -29,5 +30,11 @@ export class MatchService implements IMatchService {
       loser: match.loser,
       score: match.score,
     };
+  }
+
+  async getMatchesForUser(id: string): Promise<MatchModel[]> {
+    const matches = await this.matchRepository.find({id: id})
+    const userMatch: MatchModel[] = JSON.parse(JSON.stringify(matches));
+    return userMatch;
   }
 }

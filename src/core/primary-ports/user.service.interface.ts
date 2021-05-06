@@ -1,5 +1,6 @@
 import {UserModel} from '../models/user.model';
 import { ChatModel } from '../models/chat.model';
+import { MatchModel } from "../models/match.model";
 
 export const IUserServiceProvider = 'IUserServiceProvider';
 
@@ -11,8 +12,6 @@ export interface IUserService {
     getUserById(id: string): Promise<UserModel>;
 
     disconnectUser(id: string): Promise<void>;
-
-    getMessages(): Promise<ChatModel[]>;
 
     updateUser(id: string, user: UserModel): Promise<UserModel>
 

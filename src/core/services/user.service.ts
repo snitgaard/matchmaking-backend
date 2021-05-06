@@ -6,6 +6,8 @@ import {Repository} from 'typeorm';
 import {IUserService} from '../primary-ports/user.service.interface';
 import {ChatModel} from '../models/chat.model';
 import {Chat} from '../../infrastructure/chat.entity';
+import { MatchModel } from "../models/match.model";
+import { Match } from "../../infrastructure/match.entity";
 
 @Injectable()
 export class UserService implements IUserService {
@@ -18,6 +20,8 @@ export class UserService implements IUserService {
         private userRepository: Repository<User>,
         @InjectRepository(Chat)
         private chatRepository: Repository<Chat>,
+        @InjectRepository(Match)
+        private matchRepository: Repository<Match>,
     ) {
     }
 
@@ -92,12 +96,6 @@ export class UserService implements IUserService {
             isActive: userDb.isActive
         };
         return userModel;
-    }
-
-    async getMessages(): Promise<ChatModel[]> {
-        const messages = await this.chatRepository.find({relations: ['user']});
-        const chatMessages: ChatModel[] = JSON.parse(JSON.stringify(messages));
-        return chatMessages;
     }
 
     async updateUser(id: string, user: UserModel): Promise<UserModel> {
