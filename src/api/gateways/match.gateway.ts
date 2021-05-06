@@ -36,7 +36,7 @@ export class MatchGateway {
         match: match,
       };
       matchSocket.emit('matchDto', matchDto);
-      this.server.emit('matches', matches);
+      this.server.emit('createMatch', matches);
     } catch (e) {
       console.log('Error', e);
     }
@@ -55,18 +55,4 @@ export class MatchGateway {
     }
   }
 
-  @SubscribeMessage('getUserMatches')
-  async getUserMatchesEvent(
-    @MessageBody() matchUserDto: MatchUserDto,
-    @ConnectedSocket() matchSocket: Socket
-  ): Promise<void> {
-    try{
-    const userMatches = await this.matchService.getMatchesForUser(
-      matchUserDto.winnerId
-    );
-    matchSocket.emit('matches', userMatches);
-    } catch (e) {
-      console.log("Could not fetch match history")
-    }
-  }
 }

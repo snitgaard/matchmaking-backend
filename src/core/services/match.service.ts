@@ -34,10 +34,4 @@ export class MatchService implements IMatchService {
       score: match.score,
     };
   }
-
-  async getMatchesForUser(id: string): Promise<MatchModel[]> {
-    const winner = await this.userRepository.find({id: id})
-    const userMatch: MatchModel[] = JSON.parse(JSON.stringify(winner));
-    return userMatch;
-  }
 }
