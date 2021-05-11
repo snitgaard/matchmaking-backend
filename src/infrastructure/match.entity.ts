@@ -1,15 +1,23 @@
-import {Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
 export class Match {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @OneToMany(() => User, (user: User) => user.matches)
+  @ManyToOne(() => User, (user: User) => user.matches)
   public winner: User;
 
-  @OneToMany(() => User, (user: User) => user.matches)
+  @ManyToOne(() => User, (user: User) => user.matches)
   public loser: User;
 
   @Column({ unique: false })
