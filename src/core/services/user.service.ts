@@ -38,7 +38,7 @@ export class UserService implements IUserService {
       user.rating = this.DEFAULT_RATING;
       user.inGame = false;
       user.inQueue = false;
-      user.matches = userModel.matches;
+      user.matchResults = userModel.matchResults;
       user.isActive = false;
       user = await this.userRepository.save(user);
       return {
@@ -48,7 +48,7 @@ export class UserService implements IUserService {
         rating: user.rating,
         inGame: user.inGame,
         inQueue: user.inQueue,
-        matches: user.matches,
+        matchResults: user.matchResults,
         isActive: user.isActive,
       };
     }
@@ -69,7 +69,7 @@ export class UserService implements IUserService {
         rating: userDb.rating,
         inQueue: userDb.inQueue,
         inGame: userDb.inGame,
-        matches: userDb.matches,
+        matchResults: userDb.matchResults,
         isActive: userDb.isActive,
       };
     } else {
@@ -92,7 +92,7 @@ export class UserService implements IUserService {
       rating: userDb.rating,
       inQueue: userDb.inQueue,
       inGame: userDb.inGame,
-      matches: userDb.matches,
+      matchResults: userDb.matchResults,
       isActive: userDb.isActive,
     };
     return userModel;

@@ -8,17 +8,15 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { MatchResult } from './match-result.entity';
 
 @Entity()
 export class Match {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @ManyToOne(() => User, (user: User) => user.matches)
-  public winner: User;
-
-  @ManyToOne(() => User, (user: User) => user.matches)
-  public loser: User;
+  @OneToMany(() => MatchResult, (matchResult: MatchResult) => matchResult.match)
+  public matchResults: MatchResult[];
 
   @Column({ unique: false })
   public score: string;

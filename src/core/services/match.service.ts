@@ -15,7 +15,7 @@ export class MatchService implements IMatchService {
   ) {}
 
   async getMatches(): Promise<MatchModel[]> {
-    const matches = await this.matchRepository.find();
+    const matches = await this.matchRepository.find({ relations: ['user'] });
     const matchEntities: Match[] = JSON.parse(JSON.stringify(matches));
     return matchEntities;
   }
@@ -32,7 +32,7 @@ export class MatchService implements IMatchService {
         rating: userDb.rating,
         inQueue: userDb.inQueue,
         inGame: userDb.inGame,
-        matches: userDb.matches,
+        matchResults: userDb.matchResults,
         isActive: userDb.isActive,
       };
     } else {
@@ -43,15 +43,13 @@ export class MatchService implements IMatchService {
   async createMatch(id: string, matchModel: MatchModel): Promise<MatchModel> {
     let match = this.matchRepository.create();
     match.id = id;
-    match.winner = matchModel.winner;
-    match.loser = matchModel.loser;
+    match.matchResults = matchModel.matchResults;
     match.score = matchModel.score;
     match = await this.matchRepository.save(match);
     console.log(match + 'hej');
     return {
       id: '' + match.id,
-      winner: match.winner,
-      loser: match.loser,
+      matchResults: match.matchResults,
       score: match.score,
     };
   }

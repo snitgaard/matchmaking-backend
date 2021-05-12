@@ -1,8 +1,8 @@
 import { User } from '../../infrastructure/user.entity';
+import { MatchResult } from '../../infrastructure/match-result.entity';
 
 export interface MatchModel {
   id: string;
-  winner?: User;
-  loser?: User;
+  matchResults: MatchResult[];
   score?: string;
 }

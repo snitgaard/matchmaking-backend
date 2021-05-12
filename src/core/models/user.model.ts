@@ -1,5 +1,6 @@
 import { Chat } from '../../infrastructure/chat.entity';
 import { Match } from '../../infrastructure/match.entity';
+import { MatchResult } from '../../infrastructure/match-result.entity';
 
 export interface UserModel {
   id: string;
@@ -9,7 +10,7 @@ export interface UserModel {
   inGame?: boolean;
   inQueue?: boolean;
   messages?: Chat[];
-  matches?: Match[];
+  matchResults?: MatchResult[];
   typing?: boolean;
   isActive?: boolean;
 }

@@ -68,9 +68,10 @@ export class MatchGateway {
   ): Promise<void> {
     try {
       const matches = await this.matchService.getMatches();
+      console.log(matches);
       matchSocket.emit('matches', matches);
     } catch (e) {
-      console.log('Could not fetch matches');
+      console.log('Could not fetch matches', e);
     }
   }
 }
