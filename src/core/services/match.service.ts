@@ -15,7 +15,7 @@ export class MatchService implements IMatchService {
   ) {}
 
   async getMatches(): Promise<MatchModel[]> {
-    const matches = await this.matchRepository.find({ relations: ['user'] });
+    const matches = await this.matchRepository.find();
     const matchEntities: Match[] = JSON.parse(JSON.stringify(matches));
     return matchEntities;
   }
