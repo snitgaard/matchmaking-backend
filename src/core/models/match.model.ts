@@ -3,6 +3,6 @@ import { MatchResult } from '../../infrastructure/match-result.entity';
 
 export interface MatchModel {
   id: string;
-  matchResults: MatchResult[];
+  matchResults?: MatchResult[];
   score?: string;
 }

@@ -5,6 +5,8 @@ import { Match } from '../../infrastructure/match.entity';
 import { MatchModel } from '../models/match.model';
 import { UserModel } from '../models/user.model';
 import { User } from '../../infrastructure/user.entity';
+import { MatchResultModel } from '../models/match-result.model';
+import { MatchResult } from '../../infrastructure/match-result.entity';
 
 export class MatchService implements IMatchService {
   constructor(
@@ -12,10 +14,15 @@ export class MatchService implements IMatchService {
     private matchRepository: Repository<Match>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(MatchResult)
+    private matchResultRepository: Repository<MatchResult>,
   ) {}
 
   async getMatches(): Promise<MatchModel[]> {
-    const matches = await this.matchRepository.find();
+    const matches = await this.matchRepository.find({
+      relations: ['matchResults'],
+    });
+    console.log('list of matches', matches);
     const matchEntities: Match[] = JSON.parse(JSON.stringify(matches));
     return matchEntities;
   }
@@ -51,6 +58,24 @@ export class MatchService implements IMatchService {
       id: '' + match.id,
       matchResults: match.matchResults,
       score: match.score,
+    };
+  }
+
+  async createMatchResult(
+    id: string,
+    matchResultModel: MatchResultModel,
+  ): Promise<MatchResultModel> {
+    let matchResult = this.matchResultRepository.create();
+    matchResult.id = id;
+    matchResult.result = matchResultModel.result;
+    matchResult.match = matchResultModel.match;
+    matchResult.user = matchResultModel.user;
+    matchResult = await this.matchResultRepository.save(matchResult);
+    return {
+      id: '' + matchResult.id,
+      result: matchResult.result,
+      match: matchResult.match,
+      user: matchResult.user,
     };
   }
 }

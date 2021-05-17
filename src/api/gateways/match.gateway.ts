@@ -15,6 +15,7 @@ import { MatchDto } from '../dto/match.dto';
 import { Socket } from 'socket.io';
 import { ConnectUserDto } from '../dto/connect-user.dto';
 import { UserModel } from '../../core/models/user.model';
+import { MatchResultModel } from '../../core/models/match-result.model';
 
 @WebSocketGateway()
 export class MatchGateway {
@@ -34,6 +35,22 @@ export class MatchGateway {
         matchModel,
       );
       this.server.emit('new-match', match);
+    } catch (e) {
+      console.log('Error', e);
+    }
+  }
+
+  @SubscribeMessage('create-matchresult')
+  async createMatchResultEvent(
+    @MessageBody() matchResultModel: MatchResultModel,
+    @ConnectedSocket() matchResultSocket: Socket,
+  ): Promise<void> {
+    try {
+      const matchResult = await this.matchService.createMatchResult(
+        matchResultModel.id,
+        matchResultModel,
+      );
+      this.server.emit('new-matchresult', matchResult);
     } catch (e) {
       console.log('Error', e);
     }
