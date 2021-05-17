@@ -15,7 +15,13 @@ export class Match {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @OneToMany(() => MatchResult, (matchResult: MatchResult) => matchResult.match)
+  @OneToMany(
+    () => MatchResult,
+    (matchResult: MatchResult) => matchResult.match,
+    {
+      cascade: true,
+    },
+  )
   public matchResults: MatchResult[];
 
   @Column({ unique: false })
