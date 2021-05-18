@@ -91,4 +91,16 @@ export class MatchGateway {
       console.log('Could not fetch matches', e);
     }
   }
+
+  @SubscribeMessage('getAllMatchResults')
+  async getAllMatchResultEvents(
+    @ConnectedSocket() matchResultSocket: Socket,
+  ): Promise<void> {
+    try {
+      const matchResults = await this.matchService.getMatchResults();
+      matchResultSocket.emit('matchResults', matchResults);
+    } catch (e) {
+      console.log('Could not fetch match results', e);
+    }
+  }
 }

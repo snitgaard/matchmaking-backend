@@ -6,6 +6,8 @@ export const IMatchServiceProvider = 'IMatchServiceProvider';
 export interface IMatchService {
   getMatches(): Promise<MatchModel[]>;
 
+  getMatchResults(): Promise<MatchResultModel[]>;
+
   createMatch(id: string, match: MatchModel): Promise<MatchModel>;
 
   createMatchResult(

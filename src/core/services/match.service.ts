@@ -27,6 +27,17 @@ export class MatchService implements IMatchService {
     return matchEntities;
   }
 
+  async getMatchResults(): Promise<MatchResultModel[]> {
+    const matchResults = await this.matchResultRepository.find({
+      relations: ['match', 'user'],
+    });
+    const matchResultEntities: MatchResult[] = JSON.parse(
+      JSON.stringify(matchResults),
+    );
+    console.log(matchResultEntities, 'erdether?');
+    return matchResultEntities;
+  }
+
   async queueUp(userModel: UserModel): Promise<UserModel> {
     const userDb = await this.userRepository.findOne({
       username: userModel.username,
