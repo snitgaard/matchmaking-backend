@@ -103,4 +103,38 @@ export class MatchGateway {
       console.log('Could not fetch match results', e);
     }
   }
+
+  @SubscribeMessage('joinLobby')
+  async joinLobby(
+      @MessageBody() connectUserDto: ConnectUserDto,
+      @ConnectedSocket() matchResultSocket: Socket,
+  ): Promise<void> {
+    try {
+      const matches = await this.matchService.getMatches();
+      const availableMatchResult = matches.find(m => !m.matchResults || m.matchResults.length === 0 || m.matchResults.length === 1 );
+      if(!availableMatchResult) {
+        const match = await this.matchService.createMatch(
+            undefined,
+            {id: undefined, matchResults: [], score: '0-0'},
+        );
+        const matchResult = await this.matchService.createMatchResult(
+            undefined,
+            {id: undefined, match: JSON.parse(JSON.stringify(match)), result: false, user:  JSON.parse(JSON.stringify(connectUserDto))},
+        );
+        match.matchResults.push(JSON.parse(JSON.stringify(matchResult)));
+        matchResultSocket.emit('NewMatchCreatedForMe', match);
+      } else {
+        const matchResult = await this.matchService.createMatchResult(
+            undefined,
+            {id: undefined, match: JSON.parse(JSON.stringify(availableMatchResult)), result: false, user:  JSON.parse(JSON.stringify(connectUserDto))},
+        );
+        const matchResults = await this.matchService.getMatchResults();
+        availableMatchResult.matchResults = JSON.parse(JSON.stringify(matchResults.filter(mr => mr.match.id === availableMatchResult.id)));
+        matchResultSocket.emit('MatchFoundForMe', availableMatchResult);
+        this.server.emit('SomeoneJoinedMatch', availableMatchResult);
+      }
+    } catch (e) {
+      console.log('Could not fetch match results', e);
+    }
+  }
 }
