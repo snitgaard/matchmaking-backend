@@ -13,4 +13,5 @@ export interface UserModel {
   matchResults?: MatchResult[];
   typing?: boolean;
   isActive?: boolean;
+  lobbyLeader?: boolean;
 }

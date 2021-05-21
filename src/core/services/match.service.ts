@@ -89,4 +89,16 @@ export class MatchService implements IMatchService {
       user: matchResult.user,
     };
   }
+
+  async updateMatchResult(id: string, matchResult: MatchResultModel): Promise<MatchResultModel> {
+    await this.matchResultRepository.update(id, matchResult);
+    const updatedMatchResult = await this.matchResultRepository.findOne(id);
+    if(updatedMatchResult) {
+      return matchResult;
+    }
+    else {
+      throw new Error ('Updated matchresult was not found')
+    }
+  }
+
 }

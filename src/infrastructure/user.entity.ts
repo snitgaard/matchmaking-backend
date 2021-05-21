@@ -33,6 +33,9 @@ export class User {
   @Column({ unique: false })
   public isActive: boolean;
 
+  @Column({ unique: false })
+  public lobbyLeader: boolean;
+
   @OneToMany(() => Chat, (chat: Chat) => chat.user)
   public chat: Chat[];
 

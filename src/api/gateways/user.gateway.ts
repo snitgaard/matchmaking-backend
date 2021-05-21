@@ -63,6 +63,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
         inQueue: user.inQueue,
         inGame: user.inGame,
         isActive: user.isActive,
+        lobbyLeader: user.lobbyLeader,
       };
       console.log(authUser);
       userSocket.emit('iamconnected', authUser);

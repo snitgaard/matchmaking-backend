@@ -16,11 +16,15 @@ import { Socket } from 'socket.io';
 import { ConnectUserDto } from '../dto/connect-user.dto';
 import { UserModel } from '../../core/models/user.model';
 import { MatchResultModel } from '../../core/models/match-result.model';
+import {IUserService, IUserServiceProvider} from '../../core/primary-ports/user.service.interface';
+import {UserDTO} from '../dto/user.dto';
+import {MatchResultDto} from '../dto/match-result.dto';
 
 @WebSocketGateway()
 export class MatchGateway {
   constructor(
     @Inject(IMatchServiceProvider) private matchService: IMatchService,
+    @Inject(IUserServiceProvider) private userService: IUserService
   ) {}
 
   @WebSocketServer() server;
@@ -78,6 +82,30 @@ export class MatchGateway {
       console.log('Incorrect information');
     }
   }
+  @SubscribeMessage('updateMatchResult')
+  async handleUpdateUserEvent(
+      @MessageBody() matchResultModel: MatchResultModel,
+      @ConnectedSocket() matchResultSocket: Socket,
+  ): Promise<void> {
+    try {
+      console.log('', matchResultModel);
+      const matchResultUpdate = await this.matchService.updateMatchResult(
+          matchResultModel.id,
+          matchResultModel,
+      );
+      const matchResults = await this.matchService.getMatchResults();
+      const matchResultDTO: MatchResultDto = {
+        matchResults: matchResults,
+        matchResult: matchResultUpdate,
+      };
+      matchResultSocket.emit('matchResultDTO', matchResultDTO);
+      this.server.emit('matchResults', matchResults);
+    } catch (e) {
+      console.log('Error', e);
+    }
+  }
+
+
 
   @SubscribeMessage('getAllMatches')
   async getAllMatchesEvent(
@@ -106,7 +134,7 @@ export class MatchGateway {
 
   @SubscribeMessage('joinLobby')
   async joinLobby(
-      @MessageBody() connectUserDto: ConnectUserDto,
+      @MessageBody() connectUserDto: UserModel,
       @ConnectedSocket() matchResultSocket: Socket,
   ): Promise<void> {
     try {
@@ -117,6 +145,9 @@ export class MatchGateway {
             undefined,
             {id: undefined, matchResults: [], score: '0-0'},
         );
+        //connectUserDto.lobbyLeader = true;
+        //await this.userService.updateUser(connectUserDto.id, connectUserDto);
+       /// console.log("QueerIT", connectUserDto.username + connectUserDto.lobbyLeader)
         const matchResult = await this.matchService.createMatchResult(
             undefined,
             {id: undefined, match: JSON.parse(JSON.stringify(match)), result: false, user:  JSON.parse(JSON.stringify(connectUserDto))},

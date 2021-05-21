@@ -40,6 +40,7 @@ export class UserService implements IUserService {
       user.inQueue = false;
       user.matchResults = userModel.matchResults;
       user.isActive = false;
+      user.lobbyLeader = false;
       user = await this.userRepository.save(user);
       return {
         id: '' + user.id,
@@ -50,6 +51,7 @@ export class UserService implements IUserService {
         inQueue: user.inQueue,
         matchResults: user.matchResults,
         isActive: user.isActive,
+        lobbyLeader: user.lobbyLeader,
       };
     }
   }
@@ -71,6 +73,7 @@ export class UserService implements IUserService {
         inGame: userDb.inGame,
         matchResults: userDb.matchResults,
         isActive: userDb.isActive,
+        lobbyLeader: userDb.lobbyLeader,
       };
     } else {
       throw new Error('Cannot Login');
@@ -94,6 +97,7 @@ export class UserService implements IUserService {
       inGame: userDb.inGame,
       matchResults: userDb.matchResults,
       isActive: userDb.isActive,
+      lobbyLeader: userDb.lobbyLeader,
     };
     return userModel;
   }

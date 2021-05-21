@@ -16,4 +16,6 @@ export interface IMatchService {
   ): Promise<MatchResultModel>;
 
   queueUp(userModel: UserModel): Promise<UserModel>;
+
+  updateMatchResult(id: string, matchResult: MatchResultModel): Promise<MatchResultModel>
 }
