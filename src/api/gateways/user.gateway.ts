@@ -79,7 +79,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() userSocket: Socket,
   ): Promise<void> {
     try {
-      console.log('', userModel);
       const userUpdate = await this.userService.updateUser(
         userModel.id,
         userModel,

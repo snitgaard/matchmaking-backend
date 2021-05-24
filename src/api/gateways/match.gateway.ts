@@ -16,15 +16,18 @@ import { Socket } from 'socket.io';
 import { ConnectUserDto } from '../dto/connect-user.dto';
 import { UserModel } from '../../core/models/user.model';
 import { MatchResultModel } from '../../core/models/match-result.model';
-import {IUserService, IUserServiceProvider} from '../../core/primary-ports/user.service.interface';
-import {UserDTO} from '../dto/user.dto';
-import {MatchResultDto} from '../dto/match-result.dto';
+import {
+  IUserService,
+  IUserServiceProvider,
+} from '../../core/primary-ports/user.service.interface';
+import { UserDTO } from '../dto/user.dto';
+import { MatchResultDto } from '../dto/match-result.dto';
 
 @WebSocketGateway()
 export class MatchGateway {
   constructor(
     @Inject(IMatchServiceProvider) private matchService: IMatchService,
-    @Inject(IUserServiceProvider) private userService: IUserService
+    @Inject(IUserServiceProvider) private userService: IUserService,
   ) {}
 
   @WebSocketServer() server;
@@ -84,14 +87,13 @@ export class MatchGateway {
   }
   @SubscribeMessage('updateMatchResult')
   async handleUpdateUserEvent(
-      @MessageBody() matchResultModel: MatchResultModel,
-      @ConnectedSocket() matchResultSocket: Socket,
+    @MessageBody() matchResultModel: MatchResultModel,
+    @ConnectedSocket() matchResultSocket: Socket,
   ): Promise<void> {
     try {
-      console.log('', matchResultModel);
       const matchResultUpdate = await this.matchService.updateMatchResult(
-          matchResultModel.id,
-          matchResultModel,
+        matchResultModel.id,
+        matchResultModel,
       );
       const matchResults = await this.matchService.getMatchResults();
       const matchResultDTO: MatchResultDto = {
@@ -105,15 +107,12 @@ export class MatchGateway {
     }
   }
 
-
-
   @SubscribeMessage('getAllMatches')
   async getAllMatchesEvent(
     @ConnectedSocket() matchSocket: Socket,
   ): Promise<void> {
     try {
       const matches = await this.matchService.getMatches();
-      console.log(matches);
       matchSocket.emit('matches', matches);
     } catch (e) {
       console.log('Could not fetch matches', e);
@@ -134,33 +133,54 @@ export class MatchGateway {
 
   @SubscribeMessage('joinLobby')
   async joinLobby(
-      @MessageBody() connectUserDto: UserModel,
-      @ConnectedSocket() matchResultSocket: Socket,
+    @MessageBody() connectUserDto: UserModel,
+    @ConnectedSocket() matchResultSocket: Socket,
   ): Promise<void> {
     try {
       const matches = await this.matchService.getMatches();
-      const availableMatchResult = matches.find(m => !m.matchResults || m.matchResults.length === 0 || m.matchResults.length === 1 );
-      if(!availableMatchResult) {
-        const match = await this.matchService.createMatch(
-            undefined,
-            {id: undefined, matchResults: [], score: '0-0'},
-        );
-        //connectUserDto.lobbyLeader = true;
-        //await this.userService.updateUser(connectUserDto.id, connectUserDto);
-       /// console.log("QueerIT", connectUserDto.username + connectUserDto.lobbyLeader)
+      const availableMatchResult = matches.find(
+        (m) =>
+          !m.matchResults ||
+          m.matchResults.length === 0 ||
+          m.matchResults.length === 1,
+      );
+      if (!availableMatchResult) {
+        const match = await this.matchService.createMatch(undefined, {
+          id: undefined,
+          matchResults: [],
+          score: '0-0',
+        });
+        connectUserDto.lobbyLeader = true;
+        await this.userService.updateUser(connectUserDto.id, connectUserDto);
         const matchResult = await this.matchService.createMatchResult(
-            undefined,
-            {id: undefined, match: JSON.parse(JSON.stringify(match)), result: false, user:  JSON.parse(JSON.stringify(connectUserDto))},
+          undefined,
+          {
+            id: undefined,
+            match: JSON.parse(JSON.stringify(match)),
+            result: false,
+            user: JSON.parse(JSON.stringify(connectUserDto)),
+          },
         );
         match.matchResults.push(JSON.parse(JSON.stringify(matchResult)));
         matchResultSocket.emit('NewMatchCreatedForMe', match);
       } else {
         const matchResult = await this.matchService.createMatchResult(
-            undefined,
-            {id: undefined, match: JSON.parse(JSON.stringify(availableMatchResult)), result: false, user:  JSON.parse(JSON.stringify(connectUserDto))},
+          undefined,
+          {
+            id: undefined,
+            match: JSON.parse(JSON.stringify(availableMatchResult)),
+            result: false,
+            user: JSON.parse(JSON.stringify(connectUserDto)),
+          },
         );
         const matchResults = await this.matchService.getMatchResults();
-        availableMatchResult.matchResults = JSON.parse(JSON.stringify(matchResults.filter(mr => mr.match.id === availableMatchResult.id)));
+        availableMatchResult.matchResults = JSON.parse(
+          JSON.stringify(
+            matchResults.filter(
+              (mr) => mr.match.id === availableMatchResult.id,
+            ),
+          ),
+        );
         matchResultSocket.emit('MatchFoundForMe', availableMatchResult);
         this.server.emit('SomeoneJoinedMatch', availableMatchResult);
       }
