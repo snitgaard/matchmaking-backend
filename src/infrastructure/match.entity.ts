@@ -26,4 +26,7 @@ export class Match {
 
   @Column({ unique: false })
   public score: string;
+
+  @Column({ unique: false })
+  public hasEnded: boolean;
 }

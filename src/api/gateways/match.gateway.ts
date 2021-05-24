@@ -149,6 +149,7 @@ export class MatchGateway {
           id: undefined,
           matchResults: [],
           score: '0-0',
+          hasEnded: false,
         });
         connectUserDto.lobbyLeader = true;
         await this.userService.updateUser(connectUserDto.id, connectUserDto);

@@ -61,6 +61,7 @@ export class MatchService implements IMatchService {
     match.id = id;
     match.matchResults = matchModel.matchResults;
     match.score = matchModel.score;
+    match.hasEnded = matchModel.hasEnded;
     match = await this.matchRepository.save(match);
     return {
       id: '' + match.id,
@@ -98,6 +99,8 @@ export class MatchService implements IMatchService {
       if (result.id === matchResult.id) {
         result.user.rating = result.user.rating + 10;
         result.user.lobbyLeader = false;
+        result.match.hasEnded = true;
+        this.matchRepository.update(result.match.id, result.match);
         this.userRepository.update(result.user.id, result.user);
       } else if (
         result.match.id === matchResult.match.id &&

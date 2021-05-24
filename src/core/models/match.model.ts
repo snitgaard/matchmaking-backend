@@ -5,4 +5,6 @@ export interface MatchModel {
   id: string;
   matchResults?: MatchResult[];
   score?: string;
+  hasEnded?: boolean;
 }
+
