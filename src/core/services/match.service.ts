@@ -104,6 +104,7 @@ export class MatchService implements IMatchService {
         result.id !== matchResult.id
       ) {
         result.user.rating = result.user.rating - 10;
+        result.user.lobbyLeader = false;
         this.userRepository.update(result.user.id, result.user);
       }
     });
