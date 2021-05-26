@@ -50,10 +50,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() userSocket: Socket,
   ): Promise<void> {
     try {
-      console.log('Hello1');
       const userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
       const user = await this.userService.login(userSocket.id, userModel);
-      console.log('Hello2');
       const authUser: UserModel = {
         id: user.id,
         username: user.username,
