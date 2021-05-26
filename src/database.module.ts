@@ -20,6 +20,11 @@ import { MatchResult } from './infrastructure/match-result.entity';
         database: configService.get('POSTGRES_DB'),
         entities: [User, Chat, Match, MatchResult],
         synchronize: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       }),
     }),
   ],
