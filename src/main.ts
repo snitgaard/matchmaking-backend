@@ -9,7 +9,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
   const configService: ConfigService = app.get(ConfigService);
-  await app.listen(configService.get('PORT'));
+  await app.listen(process.env.PORT || configService.get('PORT'));
 }
 
 bootstrap();
