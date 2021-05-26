@@ -54,7 +54,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('Hello1');
       const userModel: UserModel = JSON.parse(JSON.stringify(connectUserDto));
       const user = await this.userService.login(userSocket.id, userModel);
-      console.log("Hello2")
+      console.log('Hello2');
       const authUser: UserModel = {
         id: user.id,
         username: user.username,
@@ -63,6 +63,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
         inQueue: user.inQueue,
         inGame: user.inGame,
         isActive: user.isActive,
+        lobbyLeader: user.lobbyLeader,
       };
       console.log(authUser);
       userSocket.emit('iamconnected', authUser);
@@ -71,18 +72,21 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('Incorrect information');
     }
   }
+
   @SubscribeMessage('updateUser')
   async handleUpdateUserEvent(
-      @MessageBody() userModel: UserModel,
-      @ConnectedSocket() userSocket: Socket,
+    @MessageBody() userModel: UserModel,
+    @ConnectedSocket() userSocket: Socket,
   ): Promise<void> {
     try {
-      console.log('', userModel);
-      const userUpdate = await this.userService.updateUser(userModel.id, userModel);
+      const userUpdate = await this.userService.updateUser(
+        userModel.id,
+        userModel,
+      );
       const users = await this.userService.getUsers();
-      const userDTO: UserDTO= {
+      const userDTO: UserDTO = {
         users: users,
-        user: userUpdate
+        user: userUpdate,
       };
       userSocket.emit('userDTO', userDTO);
       this.server.emit('users', users);

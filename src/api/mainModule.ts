@@ -12,9 +12,10 @@ import { MatchService } from '../core/services/match.service';
 import { ChatGateway } from './gateways/chat.gateway';
 import { IChatServiceProvider } from '../core/primary-ports/chat.service.interface';
 import { ChatService } from '../core/services/chat.service';
+import { MatchResult } from '../infrastructure/match-result.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Chat, Match])],
+  imports: [TypeOrmModule.forFeature([User, Chat, Match, MatchResult])],
   providers: [
     UserGateway,
     {
