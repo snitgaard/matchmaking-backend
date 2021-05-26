@@ -3,7 +3,7 @@ import { IChatService } from '../primary-ports/chat.service.interface';
 import { ChatModel } from '../models/chat.model';
 import { UserModel } from '../models/user.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Chat } from "../../infrastructure/chat.entity";
+import { Chat } from '../../infrastructure/chat.entity';
 import { Repository } from 'typeorm';
 import { User } from '../../infrastructure/user.entity';
 
@@ -17,12 +17,14 @@ export class ChatService implements IChatService {
   ) {}
 
   async getMessages(): Promise<ChatModel[]> {
-    const messages = await this.chatRepository.find({ relations: ['user']});
-    const chatMessages: ChatModel[] = JSON.parse(JSON.stringify(messages));
-    return chatMessages;
+    const messages = await this.chatRepository.find({ relations: ['user'] });
+    return JSON.parse(JSON.stringify(messages));
   }
 
-  async createMessage(messageString: string, userId: string): Promise<ChatModel> {
+  async createMessage(
+    messageString: string,
+    userId: string,
+  ): Promise<ChatModel> {
     let message: Chat = await this.chatRepository.create();
     message.message = messageString;
 

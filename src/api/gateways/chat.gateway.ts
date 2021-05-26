@@ -1,8 +1,6 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -22,10 +20,7 @@ export class ChatGateway {
   ) {}
   @WebSocketServer() server;
   @SubscribeMessage('create-message')
-  async createMessageEvent(
-    @MessageBody() chatDto: ChatDto,
-    @ConnectedSocket() chatSocket: Socket,
-  ): Promise<void> {
+  async createMessageEvent(@MessageBody() chatDto: ChatDto): Promise<void> {
     const chatMessage = await this.chatService.createMessage(
       chatDto.message,
       chatDto.userId,

@@ -1,6 +1,6 @@
-import {MatchResultModel} from '../../core/models/match-result.model';
+import { MatchResultModel } from '../../core/models/match-result.model';
 
 export interface MatchResultDto {
-    matchResults: MatchResultModel[];
-    matchResult: MatchResultModel;
+  matchResults: MatchResultModel[];
+  matchResult: MatchResultModel;
 }

@@ -15,17 +15,15 @@ import {
 import { UserModel } from '../../core/models/user.model';
 import { UserDTO } from '../dto/user.dto';
 import { Socket } from 'socket.io';
-import { IChatService } from '../../core/primary-ports/chat.service.interface';
 import { ConnectUserDto } from '../dto/connect-user.dto';
-import { AuthUserModel } from '../../core/models/auth-user.model';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server;
+
   constructor(
     @Inject(IUserServiceProvider) private userService: IUserService,
   ) {}
-
-  @WebSocketServer() server;
 
   @SubscribeMessage('create-user')
   async createUserEvent(
@@ -45,6 +43,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('Could not create user');
     }
   }
+
   @SubscribeMessage('connect-user')
   async handleJoinChatEvent(
     @MessageBody() connectUserDto: ConnectUserDto,

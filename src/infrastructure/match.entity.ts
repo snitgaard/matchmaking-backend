@@ -1,13 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from './user.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MatchResult } from './match-result.entity';
 
 @Entity()

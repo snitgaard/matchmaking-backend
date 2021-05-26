@@ -1,13 +1,5 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Chat } from './chat.entity';
-import { Match } from './match.entity';
 import { MatchResult } from './match-result.entity';
 
 @Entity()
@@ -40,6 +32,9 @@ export class User {
   public chat: Chat[];
 
   //Match History
-  @OneToMany(() => MatchResult, (matchResults: MatchResult) => matchResults.user)
+  @OneToMany(
+    () => MatchResult,
+    (matchResults: MatchResult) => matchResults.user,
+  )
   public matchResults: MatchResult[];
 }

@@ -1,6 +1,6 @@
-import {UserModel} from '../../core/models/user.model';
+import { UserModel } from '../../core/models/user.model';
 
 export interface UserDTO {
-    users: UserModel[];
-    user: UserModel;
+  users: UserModel[];
+  user: UserModel;
 }

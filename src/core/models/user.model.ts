@@ -1,5 +1,4 @@
 import { Chat } from '../../infrastructure/chat.entity';
-import { Match } from '../../infrastructure/match.entity';
 import { MatchResult } from '../../infrastructure/match-result.entity';
 
 export interface UserModel {

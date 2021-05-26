@@ -1,4 +1,3 @@
-import { User } from '../../infrastructure/user.entity';
 import { MatchResult } from '../../infrastructure/match-result.entity';
 
 export interface MatchModel {
@@ -7,4 +6,3 @@ export interface MatchModel {
   score?: string;
   hasEnded?: boolean;
 }
-

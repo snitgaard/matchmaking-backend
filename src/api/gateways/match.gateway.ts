@@ -11,7 +11,6 @@ import {
   IMatchServiceProvider,
 } from '../../core/primary-ports/match.service.interface';
 import { MatchModel } from '../../core/models/match.model';
-import { MatchDto } from '../dto/match.dto';
 import { Socket } from 'socket.io';
 import { ConnectUserDto } from '../dto/connect-user.dto';
 import { UserModel } from '../../core/models/user.model';
@@ -20,7 +19,6 @@ import {
   IUserService,
   IUserServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
-import { UserDTO } from '../dto/user.dto';
 import { MatchResultDto } from '../dto/match-result.dto';
 
 @WebSocketGateway()
@@ -34,7 +32,6 @@ export class MatchGateway {
   @SubscribeMessage('create-match')
   async createMatchEvent(
     @MessageBody() matchModel: MatchModel,
-    @ConnectedSocket() matchSocket: Socket,
   ): Promise<void> {
     try {
       const match = await this.matchService.createMatch(
@@ -50,7 +47,6 @@ export class MatchGateway {
   @SubscribeMessage('create-matchresult')
   async createMatchResultEvent(
     @MessageBody() matchResultModel: MatchResultModel,
-    @ConnectedSocket() matchResultSocket: Socket,
   ): Promise<void> {
     try {
       const matchResult = await this.matchService.createMatchResult(

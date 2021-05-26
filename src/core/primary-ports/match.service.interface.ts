@@ -3,6 +3,7 @@ import { UserModel } from '../models/user.model';
 import { MatchResultModel } from '../models/match-result.model';
 
 export const IMatchServiceProvider = 'IMatchServiceProvider';
+
 export interface IMatchService {
   getMatches(): Promise<MatchModel[]>;
 
@@ -17,5 +18,8 @@ export interface IMatchService {
 
   queueUp(userModel: UserModel): Promise<UserModel>;
 
-  updateMatchResult(id: string, matchResult: MatchResultModel): Promise<MatchResultModel>
+  updateMatchResult(
+    id: string,
+    matchResult: MatchResultModel,
+  ): Promise<MatchResultModel>;
 }
