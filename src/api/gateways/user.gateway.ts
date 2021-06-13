@@ -62,7 +62,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
         isActive: user.isActive,
         lobbyLeader: user.lobbyLeader,
       };
-      console.log(authUser);
       userSocket.emit('iamconnected', authUser);
       this.server.emit('users', await this.userService.getUsers());
     } catch (e) {

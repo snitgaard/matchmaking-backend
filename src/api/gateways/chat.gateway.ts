@@ -28,17 +28,6 @@ export class ChatGateway {
     this.server.emit('new-message', chatMessage);
   }
 
-  @SubscribeMessage('typing')
-  async checkTypingEvent(
-    @MessageBody() typing: boolean,
-    @ConnectedSocket() chatSocket: Socket,
-  ): Promise<void> {
-    const user = await this.chatService.updateTyping(typing, chatSocket.id);
-    if (user) {
-      this.server.emit('userTyping', user);
-    }
-  }
-
   @SubscribeMessage('getAllMessages')
   async getAllMessagesEvent(
     @ConnectedSocket() chatSocket: Socket,

@@ -36,26 +36,6 @@ export class MatchService implements IMatchService {
     return matchResultEntities;
   }
 
-  async queueUp(userModel: UserModel): Promise<UserModel> {
-    const userDb = await this.userRepository.findOne({
-      username: userModel.username,
-    });
-    if (userDb.username === userModel.username) {
-      return {
-        id: userDb.id,
-        username: userDb.username,
-        password: userDb.password,
-        rating: userDb.rating,
-        inQueue: userDb.inQueue,
-        inGame: userDb.inGame,
-        matchResults: userDb.matchResults,
-        isActive: userDb.isActive,
-      };
-    } else {
-      throw new Error('Cannot queue');
-    }
-  }
-
   async createMatch(id: string, matchModel: MatchModel): Promise<MatchModel> {
     let match = this.matchRepository.create();
     match.id = id;
@@ -96,12 +76,14 @@ export class MatchService implements IMatchService {
       relations: ['match', 'user'],
     });
     matchResults.forEach((result) => {
+
       if (result.id === matchResult.id) {
         result.user.rating = result.user.rating + 10;
         result.user.lobbyLeader = false;
         result.match.hasEnded = true;
         this.matchRepository.update(result.match.id, result.match);
         this.userRepository.update(result.user.id, result.user);
+
       } else if (
         result.match.id === matchResult.match.id &&
         result.id !== matchResult.id

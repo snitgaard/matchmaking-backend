@@ -7,6 +7,4 @@ export interface IChatService {
   createMessage(messageString: string, userId: string): Promise<ChatModel>;
 
   getMessages(): Promise<ChatModel[]>;
-
-  updateTyping(typing: boolean, id: string): Promise<UserModel>;
 }

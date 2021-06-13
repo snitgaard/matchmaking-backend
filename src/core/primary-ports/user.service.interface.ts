@@ -8,11 +8,7 @@ export interface IUserService {
 
   getUsers(): Promise<UserModel[]>;
 
-  getUserById(id: string): Promise<UserModel>;
-
   disconnectUser(id: string): Promise<void>;
-
-  getMessages(): Promise<ChatModel[]>;
 
   updateUser(id: string, user: UserModel): Promise<UserModel>;
 

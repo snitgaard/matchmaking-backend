@@ -38,15 +38,4 @@ export class ChatService implements IChatService {
       date: message.date,
     };
   }
-
-  async updateTyping(typing: boolean, id: string): Promise<UserModel> {
-    const users = await this.userRepository.find();
-    const userClients: UserModel[] = JSON.parse(JSON.stringify(users));
-
-    const userClient = await userClients.find((u) => u.id === id);
-    if (userClient && userClient.typing !== typing) {
-      userClient.typing = typing;
-      return userClient;
-    }
-  }
 }
