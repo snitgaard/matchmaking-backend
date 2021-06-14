@@ -31,9 +31,7 @@ export class MatchGateway {
   @WebSocketServer() server;
 
   @SubscribeMessage('create-match')
-  async createMatchEvent(
-    @MessageBody() matchModel: MatchModel,
-  ): Promise<void> {
+  async createMatchEvent(@MessageBody() matchModel: MatchModel): Promise<void> {
     try {
       const match = await this.matchService.createMatch(
         matchModel.id,
@@ -63,19 +61,13 @@ export class MatchGateway {
   @SubscribeMessage('updateMatchResult')
   async handleUpdateMatchResultEvent(
     @MessageBody() matchResultModel: MatchResultModel,
-    @ConnectedSocket() matchResultSocket: Socket,
   ): Promise<void> {
     try {
-      const matchResultUpdate = await this.matchService.updateMatchResult(
+      await this.matchService.updateMatchResult(
         matchResultModel.id,
         matchResultModel,
       );
       const matchResults = await this.matchService.getMatchResults();
-      const matchResultDTO: MatchResultDto = {
-        matchResults: matchResults,
-        matchResult: matchResultUpdate,
-      };
-      matchResultSocket.emit('matchResultDTO', matchResultDTO);
       this.server.emit('matchResults', matchResults);
     } catch (e) {
       console.log('Error', e);
@@ -112,7 +104,6 @@ export class MatchGateway {
     @ConnectedSocket() matchResultSocket: Socket,
   ): Promise<void> {
     try {
-
       const matches = await this.matchService.getMatches();
       const availableMatch = matches.find(
         (m) =>
@@ -142,20 +133,18 @@ export class MatchGateway {
         match.matchResults.push(JSON.parse(JSON.stringify(matchResult)));
         matchResultSocket.emit('NewMatchCreatedForMe', match);
       } else {
-        await this.matchService.createMatchResult(
-          undefined,
-          {
-            id: undefined,
-            match: JSON.parse(JSON.stringify(availableMatch)),
-            result: false,
-            user: JSON.parse(JSON.stringify(user)),
-          },
-        );
+        await this.matchService.createMatchResult(undefined, {
+          id: undefined,
+          match: JSON.parse(JSON.stringify(availableMatch)),
+          result: false,
+          user: JSON.parse(JSON.stringify(user)),
+        });
 
         const matchResults = await this.matchService.getMatchResults();
 
         availableMatch.matchResults = JSON.parse(
-          JSON.stringify(matchResults.filter((mr) => mr.match.id === availableMatch.id,),
+          JSON.stringify(
+            matchResults.filter((mr) => mr.match.id === availableMatch.id),
           ),
         );
 

@@ -76,14 +76,12 @@ export class MatchService implements IMatchService {
       relations: ['match', 'user'],
     });
     matchResults.forEach((result) => {
-
       if (result.id === matchResult.id) {
         result.user.rating = result.user.rating + 10;
         result.user.lobbyLeader = false;
         result.match.hasEnded = true;
         this.matchRepository.update(result.match.id, result.match);
         this.userRepository.update(result.user.id, result.user);
-
       } else if (
         result.match.id === matchResult.match.id &&
         result.id !== matchResult.id
